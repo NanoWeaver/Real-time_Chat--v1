@@ -30,7 +30,6 @@ const Messages = ({ socket }) => {
 
   return (
     <div className={styles.messagesColumn}>
-        <p>Test</p>
       {messagesRecieved.map((msg, i) => (
         <div className={styles.message} key={i}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -39,7 +38,7 @@ const Messages = ({ socket }) => {
               {formatDateFromTimestamp(msg.__createdtime__)}
             </span>
           </div>
-          <p className={styles.msgText}>{msg.message}Test</p>
+          <p className={styles.msgText}>{msg.message}</p>
           <br />
         </div>
       ))}
