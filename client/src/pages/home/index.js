@@ -28,7 +28,7 @@ const Home = ({ username, setUsername, room, setRoom, socket }) => {
           <option value='react'>React</option>
         </select>
 
-        <button className='btn btn-secondary' style={{ width: '100%' }} onClick={joinRoom}>Join Room</button>
+        <button className='btn btn-secondary' style={{ width: '100%' }} onClick={joinRoom}>Join Room</button> // При нажатии вызывает функцию joinRoom
       </div>
     </div>
   );

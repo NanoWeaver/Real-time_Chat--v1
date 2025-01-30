@@ -1,9 +1,10 @@
-import styles from './styles.module.css';
-import MessagesReceived from './messages';
-import SendMessage from './send-message';
+import styles from './styles.module.css'; // Импорт стилей
+import MessagesReceived from './messages'; // Импорт компонента отображения сообщений  
+import SendMessage from './send-message'; // Импорт компонента отправки сообщений
 
-const Chat = ({ username, room, socket }) => {
-  return (
+// Определяем компонент Chat
+const Chat = ({ username, room, socket }) => { // Он принимает три пропса
+  return ( // Возвращаемый JSX:
     <div className={styles.chatContainer}>
       <div>
         <MessagesReceived socket={socket} />
