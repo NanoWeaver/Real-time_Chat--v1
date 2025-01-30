@@ -1,4 +1,4 @@
-import styles from './styles.module.css'; // Импортируем CSS-модуль
+import './styles.css'; // Импортируем CSS
 import { useNavigate } from 'react-router-dom'; // Импортируем хук useNavigate, который позволяет программе перемещать пользователя между различными страницами приложения
 
 // Определяем функциональный компонент Home. Он получает несколько пропсов из App
@@ -13,22 +13,27 @@ const Home = ({ username, setUsername, room, setRoom, socket }) => {
 // После переводим пользователя на страницу чата и убираем возможность шагнуть назад с помощью стрелки браузера
     navigate('/chat', { replace: true });
   };
+
+  const joinRegistration = () => {
+    navigate('/registration', { replace: true });
+  }
       
   return ( // Возвращащем JSX 
-    <div className={styles.container}>
-      <div className={styles.formContainer}>
-        <h1>{`<>DevRooms</>`}</h1>
-        <input className={styles.input} placeholder='Username...'  onChange={(e) => setUsername(e.target.value)}/> // Обновляет состояне имени пользователя
-
-        <select className={styles.input} onChange={(e) => setRoom(e.target.value)}> // Обновляет состояне комнаты
+    <div className='home'>
+      <div className='home__container'>
+        <h1 className='home__heading'>Вход в Connectify</h1>
+        <p className='home__subtitle'>Укажите свои данные</p>
+        <input className='home__input' placeholder='Логин пользователя'  onChange={(e) => setUsername(e.target.value)}/>
+        <input className='home__input' placeholder='Пароль'  />
+        <select className='home__input' onChange={(e) => setRoom(e.target.value)}>
           <option>-- Select Room --</option>
           <option value='javascript'>JavaScript</option>
           <option value='node'>Node</option>
           <option value='express'>Express</option>
           <option value='react'>React</option>
         </select>
-
-        <button className='btn btn-secondary' style={{ width: '100%' }} onClick={joinRoom}>Join Room</button> // При нажатии вызывает функцию joinRoom
+        <button className='home__button' onClick={joinRoom}>Вход</button> 
+        <p>Нет аккаунта? <span onClick={joinRegistration}>Регистрация</span>.</p>
       </div>
     </div>
   );

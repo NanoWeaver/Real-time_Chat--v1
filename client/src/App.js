@@ -2,6 +2,7 @@ import './App.css'; // Ипорт стилей для приложения
 import { useState } from 'react'; // Импорт хука useState
 import Home from './pages/home'; // Импорт компонента Home для отображения на главное странице
 import Chat from './pages/chat'; // Импорт компонента Chat, который будет отображаться на странице чата
+import Registr from './pages/registration'; // Импорт компонента Registr, который будет отображаться на странице регистрации
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // импортируем необходимые компоненты из библиотеки React Router для организации маршрутизации
 import io from 'socket.io-client'; // Импорт библиотеки Socket.IO для создания WebSocket-соединений
 
@@ -31,6 +32,10 @@ function App() { // Oпределение функционального ком�
           <Route
             path='/chat'
             element={<Chat username={username} room={room} socket={socket} />}
+          />
+          <Route
+            path='/registration'
+            element={<Registr/>}
           />
         </Routes>
       </div>
