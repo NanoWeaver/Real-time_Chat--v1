@@ -1,9 +1,9 @@
 import './styles.css'; // Импортируем CSS
 import { useNavigate } from 'react-router-dom'; // Импортируем хук useNavigate, который позволяет программе перемещать пользователя между различными страницами приложения
 import { useRef } from 'react';
-import { validationUserName, validationUserLogin, validationUserPassword } from '../validation'; // Импортируем функции
+import { validationUserName, validationUserLogin, validationUserPassword } from '../validation/index.js'; // Импортируем функции
 
-const Registr = (socket) => {
+const Registr = ({socket}) => {
     const navigate = useNavigate(); // Создаем функцию ,чтоб перенапровлять пользователя на другую страницу
 
     const userNameRef = useRef(null) // Получаем поле с именем пользователя
@@ -15,8 +15,12 @@ const Registr = (socket) => {
           validationUserName(userNameRef) &&
           validationUserLogin(userLoginRef) &&
           validationUserPassword(userPasswordRef)
-        ) {
-          socket.emit('send_registr', { userNameRef, userLoginRef, userPasswordRef})
+        ) { // Создаём событие send_registr и отправляем на сервер
+          socket.emit('send_registr', { 
+            userName: userNameRef.current.value, 
+            userLogin: userLoginRef.current.value, 
+            userPassword: userPasswordRef.current.value 
+          });
         }
     
     // После переводим пользователя на страницу Входа в аккаутн и убираем возможность шагнуть назад с помощью стрелки браузера
