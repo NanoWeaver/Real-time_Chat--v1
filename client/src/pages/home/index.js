@@ -5,13 +5,20 @@ import { useNavigate } from 'react-router-dom'; // Импортируем хук
 const Home = ({ username, setUsername, room, setRoom, socket }) => { 
   const navigate = useNavigate(); // Создаем функцию ,чтоб перенапровлять пользователя на другую страницу
 
-  const joinRoom = () => { // Функция при клике на кнопку входа в комнату
-    if (room !== '' && username !== '') { // Проверяем чтоб имя и название комнаты были заполнены
-      socket.emit('join_room', { username, room }); // Отправляем событие join-room на сервер , предаем объект с именем и названием комнаты
-    }
+//   const joinRoom = () => { // Функция при клике на кнопку входа в комнату
+//     if (room !== '' && username !== '') { // Проверяем чтоб имя и название комнаты были заполнены
+//       socket.emit('join_room', { username, room }); // Отправляем событие join-room на сервер , предаем объект с именем и названием комнаты
+//     }
 
-// После переводим пользователя на страницу чата и убираем возможность шагнуть назад с помощью стрелки браузера
-    navigate('/chat', { replace: true });
+// // После переводим пользователя на страницу чата и убираем возможность шагнуть назад с помощью стрелки браузера
+//     navigate('/chat', { replace: true });
+//   };
+
+  const joinRooms = () => { // Функция при клике на кнопку входа в аккаунт
+    
+
+  // После переводим пользователя на страницу чата и убираем возможность шагнуть назад с помощью стрелки браузера
+    navigate('/rooms', { replace: true });
   };
 
   const joinRegistration = () => {
@@ -25,15 +32,15 @@ const Home = ({ username, setUsername, room, setRoom, socket }) => {
         <p className='home__subtitle'>Укажите свои данные</p>
         <input className='home__input' placeholder='Логин пользователя'  onChange={(e) => setUsername(e.target.value)}/>
         <input className='home__input' placeholder='Пароль'  />
-        <select className='home__input' onChange={(e) => setRoom(e.target.value)}>
+        <select style={{display: 'none'}} className='home__input' onChange={(e) => setRoom(e.target.value)}>
           <option>-- Select Room --</option>
           <option value='javascript'>JavaScript</option>
           <option value='node'>Node</option>
           <option value='express'>Express</option>
           <option value='react'>React</option>
         </select>
-        <button className='home__button' onClick={joinRoom}>Вход</button> 
-        <p>Нет аккаунта? <span onClick={joinRegistration}>Регистрация</span>.</p>
+        <button className='home__button' onClick={joinRooms}>Вход</button> 
+        <p className='home__subtitle'>Нет аккаунта? <span className='home__link' onClick={joinRegistration}>Регистрация</span>.</p>
       </div>
     </div>
   );

@@ -1,3 +1,17 @@
+:root {
+  --primary-background-color: #ffffff; /* Основной фон */
+  --secondary-background-color: #F7F7F7; /* Дополнение к основному фону */
+  --primary-text-color: #333333; /* Основной текст */
+  --secondary-text-color: #777777; /* Второстепенный текст */
+  --primary-button-color: #98FFDA; /* Цвет кнопки Войти */
+  --secondary-button-color: #7ED957; /* Цвет кнопки Регистрация */
+  --highlight-color: #FF6B6B; /* Акцентный цвет */
+  --message-background-color: #F7F7F7; /* Фон для сообщений */
+  --primary-border-color: #F0FFFA; /* Основной границ */
+}
+
+
+
 html * {
   font-family: Arial;
   box-sizing: border-box;
@@ -6,7 +20,7 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background: rgb(63, 73, 204);
+  background: var(--primary-background-color);
 }
 ::-webkit-scrollbar {
   width: 20px;
@@ -31,16 +45,4 @@ body {
   cursor: pointer;
   border: none;
 }
-.btn-outline {
-  color: rgb(153, 217, 234);
-  border: 1px solid rgb(153, 217, 234);
-  background: rgb(63, 73, 204);
-}
-.btn-primary {
-  background: rgb(153, 217, 234);
-  color: rgb(0, 24, 111);
-}
-.btn-secondary {
-  background: rgb(0, 24, 111);
-  color: #fff;
-}
+
