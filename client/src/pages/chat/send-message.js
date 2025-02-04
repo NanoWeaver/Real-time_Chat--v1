@@ -1,4 +1,4 @@
-import styles from './styles.module.css'; // Импорт стилей
+import './styles.css'; // Импорт стилей
 import React, { useState } from 'react'; //Импорт библиотеки и хука
 
 // Определяем компонент SendMessage с тремя пропсами
@@ -16,14 +16,14 @@ const SendMessage = ({ socket, username, room }) => {
   };
 
   return ( // Возврат JSX-разметки
-    <div className={styles.sendMessageContainer}>
+    <div className='send-message'>
       <input
-        className={styles.messageInput}
+        className='send-message__message-input'
         placeholder='Message...'
         onChange={(e) => setMessage(e.target.value)} // Обновление состояние при вводе текста
         value={message}
       />
-      <button className='btn btn-primary' onClick={sendMessage}>
+      <button className='send-message__message-button' onClick={sendMessage}>
         Отправить сообщение
       </button>
     </div>

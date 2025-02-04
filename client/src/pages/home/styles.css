@@ -55,6 +55,10 @@
     color: var(--primary-text-color);
 }
 
+.--secondary-button {
+    background-color: var(--secondary-button-color);
+}
+
 .home__link {
     cursor: pointer;
     color: var(--primary-text-color);

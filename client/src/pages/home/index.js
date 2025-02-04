@@ -1,10 +1,16 @@
 import './styles.css'; // Импортируем CSS
 import { useNavigate } from 'react-router-dom'; // Импортируем хук useNavigate, который позволяет программе перемещать пользователя между различными страницами приложения
+import { useRef } from 'react';
 
 // Определяем функциональный компонент Home. Он получает несколько пропсов из App
 const Home = ({ username, setUsername, room, setRoom, socket }) => { 
   const navigate = useNavigate(); // Создаем функцию ,чтоб перенапровлять пользователя на другую страницу
+  const userLoginRef = useRef(null) // Получаем поле с логином пользователя
+  const userPasswordRef = useRef(null) // Получаем поле с паролем пользователя
 
+  socket.on('open_connectify', (data) => {
+    joinConnectify();
+  })
 //   const joinRoom = () => { // Функция при клике на кнопку входа в комнату
 //     if (room !== '' && username !== '') { // Проверяем чтоб имя и название комнаты были заполнены
 //       socket.emit('join_room', { username, room }); // Отправляем событие join-room на сервер , предаем объект с именем и названием комнаты
@@ -14,14 +20,19 @@ const Home = ({ username, setUsername, room, setRoom, socket }) => {
 //     navigate('/chat', { replace: true });
 //   };
 
-  const joinRooms = () => { // Функция при клике на кнопку входа в аккаунт
-    
-
-  // После переводим пользователя на страницу чата и убираем возможность шагнуть назад с помощью стрелки браузера
-    navigate('/rooms', { replace: true });
+  const loginVerification = () => { // Функция при клике на кнопку входа в аккаунт
+    socket.emit('login_vertification', { 
+      userLogin: userLoginRef.current.value, 
+      userPassword: userPasswordRef.current.value
+    });
+    console.log('Запрос на проверку данных отправлен')
   };
 
-  const joinRegistration = () => {
+  const joinConnectify = () => { // Перевод в само приложение
+    navigate('/chat', { replace: true });
+  }
+
+  const joinRegistration = () => { // Перевод в окно регистрации
     navigate('/registration', { replace: true });
   }
       
@@ -30,8 +41,8 @@ const Home = ({ username, setUsername, room, setRoom, socket }) => {
       <div className='home__container'>
         <h1 className='home__heading'>Вход в Connectify</h1>
         <p className='home__subtitle'>Укажите свои данные</p>
-        <input className='home__input' placeholder='Логин пользователя'  onChange={(e) => setUsername(e.target.value)}/>
-        <input className='home__input' placeholder='Пароль'  />
+        <input className='home__input' placeholder='Логин пользователя' ref={userLoginRef} onChange={(e) => setUsername(e.target.value)}/>
+        <input className='home__input' placeholder='Пароль' ref={userPasswordRef}/>
         <select style={{display: 'none'}} className='home__input' onChange={(e) => setRoom(e.target.value)}>
           <option>-- Select Room --</option>
           <option value='javascript'>JavaScript</option>
@@ -39,7 +50,7 @@ const Home = ({ username, setUsername, room, setRoom, socket }) => {
           <option value='express'>Express</option>
           <option value='react'>React</option>
         </select>
-        <button className='home__button' onClick={joinRooms}>Вход</button> 
+        <button className='home__button' onClick={loginVerification}>Вход</button> 
         <p className='home__subtitle'>Нет аккаунта? <span className='home__link' onClick={joinRegistration}>Регистрация</span>.</p>
       </div>
     </div>

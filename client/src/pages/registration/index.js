@@ -39,8 +39,8 @@ const Registr = ({socket}) => {
             <input className='home__input --userName' placeholder='Имя пользователя' ref={userNameRef}/>
             <input className='home__input --userLogin' placeholder='Логин' ref={userLoginRef}/>
             <input className='home__input --userPassword' placeholder='Пароль'  ref={userPasswordRef}/>
-            <button className='home__button' onClick={registerUser}>Регистрация</button> 
-            <p>Есть аккаунт? <span onClick={joinHome}>Вход</span>.</p>
+            <button className='home__button --secondary-button' onClick={registerUser}>Регистрация</button> 
+            <p className='home__subtitle'>Есть аккаунт? <span className='home__link' onClick={joinHome}>Вход</span>.</p>
           </div>
         </div>
     );
