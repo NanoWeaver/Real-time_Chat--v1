@@ -29,7 +29,7 @@ html {
     display: flex;
     column-gap: 3%;
     min-height: 30px;
-    height: 5%;
+    height: 7%;
 }
 
 .navigation-message__button {
@@ -44,6 +44,45 @@ html {
 
 .--create-chat {
     background-color: var(--secondary-button-color);
+}
+
+.creatingChat {
+    flex-grow: 1;
+    display: flex;                 
+    align-items: center;
+}
+
+.creatingChat__form {
+    padding: 0 5%;
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px;
+    height: auto;
+    width: 100%;
+}
+
+.creatingChat__input {
+    min-height: 30px;
+    height: 7%;
+    padding: 10px 5px;
+    border: 1px solid var(--primary-border-color);
+    border-radius: 5px;
+    color: var(--primary-text-color);
+    font-size: 1em;
+}
+
+.creatingChat__button {
+    cursor: pointer;
+    padding: 10px 5px;
+    border: 0;
+    background-color: var(--secondary-button-color);
+    border-radius: 5px;
+    color: var(--primary-text-color);
+    font-size: 1em;
+}
+
+.--cancellation {
+    background-color: var(--highlight-color);
 }
 
 .messages-area {

@@ -3,12 +3,24 @@ import { useNavigate } from 'react-router-dom'; // Импортируем хук
 import { useRef } from 'react';
 
 // Определяем функциональный компонент Home. Он получает несколько пропсов из App
-const Home = ({ username, setUsername, room, setRoom, socket }) => { 
+const Home = ({ 
+                userName,
+                setUserName,
+                userLogin,
+                setUserLogin,
+                userPassword,
+                setUserPassword,
+                socket
+              }) => { 
   const navigate = useNavigate(); // Создаем функцию ,чтоб перенапровлять пользователя на другую страницу
   const userLoginRef = useRef(null) // Получаем поле с логином пользователя
   const userPasswordRef = useRef(null) // Получаем поле с паролем пользователя
 
+  // Слушаем подтверждение входа с сервера
   socket.on('open_connectify', (data) => {
+    setUserName(data.userName);
+    setUserLogin(data.userLogin);
+    setUserPassword(data.userPassword);
     joinConnectify();
   })
 //   const joinRoom = () => { // Функция при клике на кнопку входа в комнату
@@ -41,9 +53,9 @@ const Home = ({ username, setUsername, room, setRoom, socket }) => {
       <div className='home__container'>
         <h1 className='home__heading'>Вход в Connectify</h1>
         <p className='home__subtitle'>Укажите свои данные</p>
-        <input className='home__input' placeholder='Логин пользователя' ref={userLoginRef} onChange={(e) => setUsername(e.target.value)}/>
+        <input className='home__input' placeholder='Логин пользователя' ref={userLoginRef} />
         <input className='home__input' placeholder='Пароль' ref={userPasswordRef}/>
-        <select style={{display: 'none'}} className='home__input' onChange={(e) => setRoom(e.target.value)}>
+        <select style={{display: 'none'}} className='home__input'>
           <option>-- Select Room --</option>
           <option value='javascript'>JavaScript</option>
           <option value='node'>Node</option>

@@ -9,8 +9,10 @@ import io from 'socket.io-client'; // Импорт библиотеки Socket.I
 const socket = io.connect('http://localhost:4000'); // Устанавливаем соединение с сервером на локальном хосте 4000
 
 function App() { // Oпределение функционального компонента App
-  const [username, setUsername] = useState(''); // Cоздание состояния username, которое будет хранить имя пользователя. setUsername — функция, которая позволяет обновлять это состояние
+  const [userName, setUserName] = useState(''); // Cоздание состояния username, которое будет хранить имя пользователя. setUsername — функция, которая позволяет обновлять это состояние
   const [room, setRoom] = useState(''); // Cоздание состояния room, которое будет хранить имя комнаты чата, setRoom — функция для его обновления
+  const [userLogin, setUserLogin] = useState(''); // Cоздание состояния userLogin, которое будет хранить имя пользователя, setUserLogin — функция для его обновления
+  const [userPassword, setUserPassword] = useState(''); // Cоздание состояния userPassword, которое будет хранить пароль пользователя, setUserPassword — функция для его обновления
 
   return ( // Настройка маршрутизации 
     <Router>
@@ -20,18 +22,28 @@ function App() { // Oпределение функционального ком�
             path='/'
             element={
               <Home
-                username={username}
-                setUsername={setUsername}
-                room={room}
-                setRoom={setRoom}
-                socket={socket}
+                userName = {userName}
+                setUserName = {setUserName}
+                userLogin = {userLogin}
+                setUserLogin = {setUserLogin}
+                userPassword = {userPassword}
+                setUserPassword = {setUserPassword}
+                socket = {socket}
               />
             }
           />
           {/* Add this */}
           <Route
             path='/chat'
-            element={<Chat username={username} room={room} socket={socket} />}
+            element={
+                <Chat 
+                userName = {userName}
+                setUserName = {setUserName}
+                userLogin = {userLogin}
+                userPassword = {userPassword}
+                room = {room} 
+                setRoom = {setRoom}
+              />}
           />
           <Route
             path='/registration'
