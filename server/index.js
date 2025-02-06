@@ -4,7 +4,7 @@ import http from 'http'; // Импортируем встроенный моду
 import cors from 'cors'; // Импортируем библиотека для принятия запросов из других доменов
 import { Server } from 'socket.io'; // Импортируем класс с помощью деструктуризации объекта  
 import { userSearchDatabase, verifyinUserPassword, registerUser } from '../client/src/pages/registration/script.js'; // Импортируем наши функции работы с бд 
-
+import { roomSearchDatabase, registerRoom, addingRoomUser } from '../client/src/pages/chat/script.js'; // Импортируем наши функции работы с бд 
 app.use(cors()); // Добавляем промежуточное CORS ПО , для обработки запросов с других доменов
 
 const server = http.createServer(app); // Создаём HTTP сервер с помощью экземпляра Express
@@ -66,7 +66,7 @@ io.on('connection', (socket) => { // Обработка подключения �
     socket.on('send_registr', async (data) => {
         // Ищем пользователя в бд
         const searchResult = await userSearchDatabase(data.userLogin)
-        if(!searchResult) { // Если пользователь ещё не зарегистриован , то регистрируем
+        if (!searchResult) { // Если пользователь ещё не зарегистриован , то регистрируем
             await registerUser(data.userName, data.userLogin, data.userPassword);
         } else { // А если уже есть такой логин , то не дублируем
             console.log('Пользователь уже зарегистрирвоан')
@@ -86,8 +86,24 @@ io.on('connection', (socket) => { // Обработка подключения �
                 console.log('Проверьте пароль'); // Если пароль не верный
             } else {
                 console.log('Всё верно!')
-                socket.emit('open_connectify', {searchResult});
+                socket.emit('open_connectify', searchResult);
             }
+        }
+    });
+
+    // Обработка события создания комнаты
+    socket.on('creating_room', async (data) => {
+        // Проверяем нет ли уже такой комнаты
+        console.log('Отправляем запрос на существование комнаты')
+        const searchResult = await roomSearchDatabase(data.roomLogin);
+        console.log('Получили результаты поиска комнаты')
+        if (!searchResult) { // Если комнаты нет ,то создаём её и добавляем на сервер
+            await registerRoom(data.roomName, data.roomLogin);
+            // Затем добавляем эту комнату в объект пользователя
+            console.log('Передаём логин пользователя:' + data.userLogin + 'И логин комнаты' + data.roomLogin)
+            await addingRoomUser(data.userLogin, data.roomLogin);
+        } else {
+            console.log('Комната уже создана')
         }
     })
 });

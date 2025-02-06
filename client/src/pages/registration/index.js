@@ -19,7 +19,7 @@ const Registr = ({socket}) => {
           socket.emit('send_registr', { 
             userName: userNameRef.current.value, 
             userLogin: userLoginRef.current.value, 
-            userPassword: userPasswordRef.current.value 
+            userPassword: userPasswordRef.current.value,
           });
           // После переводим пользователя на страницу Входа в аккаутн и убираем возможность шагнуть назад с помощью стрелки браузера
           joinHome();

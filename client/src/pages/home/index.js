@@ -4,11 +4,8 @@ import { useRef } from 'react';
 
 // Определяем функциональный компонент Home. Он получает несколько пропсов из App
 const Home = ({ 
-                userName,
                 setUserName,
-                userLogin,
                 setUserLogin,
-                userPassword,
                 setUserPassword,
                 socket
               }) => { 
@@ -21,6 +18,7 @@ const Home = ({
     setUserName(data.userName);
     setUserLogin(data.userLogin);
     setUserPassword(data.userPassword);
+    console.log('Логин пользователя при регистрации ' + data.userLogin)
     joinConnectify();
   })
 //   const joinRoom = () => { // Функция при клике на кнопку входа в комнату

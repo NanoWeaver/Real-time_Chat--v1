@@ -33,13 +33,14 @@ export async function verifyinUserPassword(userObject,userPassword) {
     }
 }
 
-// Функция регеистрации пользователя и добавления его в базу данных
+// Функция регистрации пользователя и добавления его в базу данных
 export async function registerUser(userName, userLogin, userPassword) {
     try {
         const userDoc = await addDoc(collection(db, "users"), {
             userName: userName,
             userLogin: userLogin,
-            userPassword: userPassword
+            userPassword: userPassword,
+            userRooms : []
         });
         console.log("Пользователь зарегистрирован с ID:",  userDoc.id);
     } catch (e) {

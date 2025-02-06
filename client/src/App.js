@@ -43,6 +43,7 @@ function App() { // Oпределение функционального ком�
                 userPassword = {userPassword}
                 room = {room} 
                 setRoom = {setRoom}
+                socket = {socket}
               />}
           />
           <Route
