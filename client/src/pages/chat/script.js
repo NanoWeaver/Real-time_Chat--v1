@@ -28,6 +28,7 @@ export async function registerRoom(roomName, roomLogin) {
         const roomDoc = await addDoc(collection(db, "rooms"), {
             roomName: roomName,
             roomLogin: roomLogin,
+            roomUsers: []
         });
         console.log("Комната создана с ID:",  roomDoc.id);
     } catch (e) {
@@ -47,5 +48,20 @@ export async function addingRoomUser(userLogin, roomLogin) {
     const userRef = doc(db, 'users', userDoc.id);
     await updateDoc(userRef, {
         userRooms : userRoomsNew
+    })
+}
+
+// Фунция добавления нового пользователя в объект комнаты
+export async function addingUserRoom(userLogin, roomLogin) {
+    // Получаем комнату
+    const roomDoc = await roomSearchDatabase(roomLogin);
+    console.log(roomDoc)
+    // Добавляем пользователя в общий массив
+    const roomUsersNew = roomDoc.roomUsers;
+    roomUsersNew.push(userLogin)
+    // Получаем ссылку на документ комнаты
+    const roomRef = doc(db, 'rooms', roomDoc.id);
+    await updateDoc(roomRef, {
+        roomUsers : roomUsersNew
     })
 }

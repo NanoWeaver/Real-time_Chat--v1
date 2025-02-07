@@ -4,11 +4,13 @@ import { validationUserName, validationUserLogin} from '../../validation/index.j
 
 const NavigationMessage = ({ socket, userLogin }) => { // Определение компонента Massages с одним промтом 
   const [creatingChat, setCreatingChat] = useState(false);
+  const [addingChat, setAddChat] = useState(false);
   const roomNameRef = useRef(null);
   const roomLoginRef = useRef(null);
 
   // Скрипт для открытия окна создания чата
   const showChatCreationForm = () => {
+    setAddChat(false);
     setCreatingChat(true);
     console.log('Окно создания чата открыто')
   }
@@ -34,8 +36,30 @@ const NavigationMessage = ({ socket, userLogin }) => { // Определение
     setCreatingChat(false);
   }
 
+  // Функция открытия окна добавления чата
   const showChatAddForm = () => {
-    console.log('Добавлен в чат')
+    setCreatingChat(false);
+    setAddChat(true);
+    console.log('Открыто окно добавления чата')
+  }
+
+  // Функция добавления чата пользователю
+  const addChat = () => {
+    if (validationUserLogin(roomLoginRef)) {
+      socket.emit('add_room', {
+        roomLogin: roomLoginRef.current.value,
+        userLogin : userLogin
+      });
+      console.log('Валидация комнаты прошла успешно, отправлен запрос на сервер, логин пользователя ' + userLogin)
+      setAddChat(false);
+    } else {
+      console.log('Данные некоректны')
+    }
+  }
+
+  // Функция отмены добавления чата пользователю
+  const cancelingAdd = () => {
+    setAddChat(false)
   }
 
   return ( // Возвращаем JSX
@@ -45,23 +69,31 @@ const NavigationMessage = ({ socket, userLogin }) => { // Определение
         <button className='navigation-message__button --add-chat' onClick={showChatAddForm}>Добавить чат</button>
       </div>
       {
-          creatingChat ? (
-            <div className='creatingChat'>
-              <div className='creatingChat__form'>
-                <input className='creatingChat__input' placeholder='Имя чата' ref={roomNameRef}/>
-                <input className='creatingChat__input' placeholder='Идентификатор чата' ref={roomLoginRef}/>
-                <button className='creatingChat__button' onClick={createChat}>Создать</button>
-                <button className='creatingChat__button --cancellation' onClick={cancelingCreation}>Отмена</button>
-              </div>
+        creatingChat ? (
+          <div className='chat-form'>
+            <div className='chat-form__form'>
+              <input className='chat-form__input' placeholder='Имя чата' ref={roomNameRef}/>
+              <input className='chat-form__input' placeholder='Идентификатор чата' ref={roomLoginRef}/>
+              <button className='chat-form__button' onClick={createChat}>Создать</button>
+              <button className='chat-form__button --cancellation' onClick={cancelingCreation}>Отмена</button>
             </div>
-          ) : (
-            <div className='navigation-message__rooms-wrapper'>
-              <div>
-                У вас пока нет чатов
-              </div>
+          </div>
+        ) : addingChat ?  (
+          <div className='chat-form'>
+          <div className='chat-form__form'>
+            <input className='chat-form__input' placeholder='Идентификатор чата' ref={roomLoginRef}/>
+            <button className='chat-form__button --add-button' onClick={addChat}>Добавить</button>
+            <button className='chat-form__button --cancellation' onClick={cancelingAdd}>Отмена</button>
+          </div>
+        </div>
+        ) : (
+          <div className='navigation-message__rooms-wrapper'>
+            <div>
+              У вас пока нет чатов
             </div>
-          )
-        }
+          </div>
+        )
+      }
     </div>
   );
 };

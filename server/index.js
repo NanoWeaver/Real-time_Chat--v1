@@ -4,7 +4,7 @@ import http from 'http'; // Импортируем встроенный моду
 import cors from 'cors'; // Импортируем библиотека для принятия запросов из других доменов
 import { Server } from 'socket.io'; // Импортируем класс с помощью деструктуризации объекта  
 import { userSearchDatabase, verifyinUserPassword, registerUser } from '../client/src/pages/registration/script.js'; // Импортируем наши функции работы с бд 
-import { roomSearchDatabase, registerRoom, addingRoomUser } from '../client/src/pages/chat/script.js'; // Импортируем наши функции работы с бд 
+import { roomSearchDatabase, registerRoom, addingRoomUser, addingUserRoom } from '../client/src/pages/chat/script.js'; // Импортируем наши функции работы с бд 
 app.use(cors()); // Добавляем промежуточное CORS ПО , для обработки запросов с других доменов
 
 const server = http.createServer(app); // Создаём HTTP сервер с помощью экземпляра Express
@@ -102,8 +102,25 @@ io.on('connection', (socket) => { // Обработка подключения �
             // Затем добавляем эту комнату в объект пользователя
             console.log('Передаём логин пользователя:' + data.userLogin + 'И логин комнаты' + data.roomLogin)
             await addingRoomUser(data.userLogin, data.roomLogin);
+            // Затем добавлем пользователя в объект комнаты
+            await addingUserRoom(data.userLogin, data.roomLogin)
         } else {
             console.log('Комната уже создана')
+        }
+    })
+
+    // Обработка события добавления комнаты пользователю
+    socket.on('add_room', async (data) => {
+        // Проверяем существует ли комната
+        const searchResult = await roomSearchDatabase(data.roomLogin);
+        if (!searchResult) {
+            console.log('Комнаты не существует')
+        } else {
+            // Добавляем эту комнату в объект пользователя
+            console.log('Передаём логин пользователя:' + data.userLogin + 'И логин комнаты' + data.roomLogin)
+            await addingRoomUser(data.userLogin, data.roomLogin);
+            // Затем добавлем пользователя в объект комнаты
+            await addingUserRoom(data.userLogin, data.roomLogin)
         }
     })
 });

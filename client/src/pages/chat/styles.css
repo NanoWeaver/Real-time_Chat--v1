@@ -46,13 +46,13 @@ html {
     background-color: var(--secondary-button-color);
 }
 
-.creatingChat {
+.chat-form {
     flex-grow: 1;
     display: flex;                 
     align-items: center;
 }
 
-.creatingChat__form {
+.chat-form__form {
     padding: 0 5%;
     display: flex;
     flex-direction: column;
@@ -61,7 +61,7 @@ html {
     width: 100%;
 }
 
-.creatingChat__input {
+.chat-form__input {
     min-height: 30px;
     height: 7%;
     padding: 10px 5px;
@@ -71,7 +71,7 @@ html {
     font-size: 1em;
 }
 
-.creatingChat__button {
+.chat-form__button {
     cursor: pointer;
     padding: 10px 5px;
     border: 0;
@@ -83,6 +83,10 @@ html {
 
 .--cancellation {
     background-color: var(--highlight-color);
+}
+
+.--add-button {
+    background-color: var(--primary-button-color);
 }
 
 .messages-area {
