@@ -65,3 +65,12 @@ export async function addingUserRoom(userLogin, roomLogin) {
         roomUsers : roomUsersNew
     })
 }
+
+// Функция получения списка комнат пользователя
+export async function getUserRooms(userLogin) {
+    // Получаем пользователя
+    const userDoc = await userSearchDatabase(userLogin);
+    // Получаем его список чатов
+    const userRooms = userDoc.userRooms;
+    return userRooms
+}

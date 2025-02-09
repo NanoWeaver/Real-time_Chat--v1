@@ -1,12 +1,30 @@
 import './styles.css'; // Импортируем стили
 import { useState, useEffect, useRef } from 'react'; // Импорт хуков React
 import { validationUserName, validationUserLogin} from '../../validation/index.js'; // Импортируем функции
+import {getUserRooms, roomSearchDatabase} from './script.js' // Импорт функции получения списка комнат пользователя
 
 const NavigationMessage = ({ socket, userLogin }) => { // Определение компонента Massages с одним промтом 
   const [creatingChat, setCreatingChat] = useState(false);
   const [addingChat, setAddChat] = useState(false);
+  const [rooms, setRooms] = useState([]);
   const roomNameRef = useRef(null);
   const roomLoginRef = useRef(null);
+
+  useEffect(() => {
+    const updateListRooms = async () => {
+      const userRoomsList = await getUserRooms(userLogin); // Получаем комнаты пользователя
+      const userRoomsObjectArr = [];
+      console.log(userRoomsList)
+      for (let i = 0; i < userRoomsList.length; i++) {
+        let room = await roomSearchDatabase(userRoomsList[i]);
+        console.log('Объект комнаты' + room)
+        userRoomsObjectArr.push(room);
+      }
+      setRooms(userRoomsObjectArr); // Обновляем состояние
+      console.log(userRoomsObjectArr)
+    };
+    updateListRooms();
+  },[userLogin])
 
   // Скрипт для открытия окна создания чата
   const showChatCreationForm = () => {
@@ -88,9 +106,26 @@ const NavigationMessage = ({ socket, userLogin }) => { // Определение
         </div>
         ) : (
           <div className='navigation-message__rooms-wrapper'>
-            <div>
-              У вас пока нет чатов
-            </div>
+            {
+              rooms.length >= 1 ? (
+                <div className="navigation-message">
+                  {rooms.map((room) => (
+                    <div >
+                      <h2>{room.roomName}</h2>
+                      <p>
+                        <span>{room.lastMessage?.sender}</span>
+                        {room.lastMessage?.text}
+                      </p>
+                    </div>
+                  ))}
+              </div>
+              ) : (
+                <div>
+                  У вас пока нет чатов
+                </div>
+              )
+            }
+            
           </div>
         )
       }
