@@ -1,11 +1,14 @@
 import './styles.css'; // Импортируем стили
 import { useState, useEffect } from 'react'; // Импорт хуков React
 
-const MessagesArea = ({ socket, userName }) => { // Определение компонента Massages с одним промтом 
-  const [messagesReceived, setMessagesReceived] = useState([]); // Определяем состояние
+const MessagesArea = ({ socket, userName, room }) => { // Определение компонента Massages с одним промтом 
+  const [messagesReceived, setMessagesReceived] = useState([]); // Определяем состояние для хранения сообщений
 
   useEffect(() => {
-    
+    setMessagesReceived([]);
+  },[room])
+
+  useEffect(() => {
     socket.on('receive_message', (data) => { // Обрабатывем сообщение с сервера
       console.log('Отобразили сообщение от пользователя с ником ' + userName)
       setMessagesReceived((prev) => [
@@ -26,6 +29,7 @@ const MessagesArea = ({ socket, userName }) => { // Определение ко�
 
   return ( // Возвращаем JSX
     <div className='messages-area'>
+      <h1>{room}</h1>
     {messagesReceived.map((msg, i) => (
       <div key={i} className='message'>
         <div>

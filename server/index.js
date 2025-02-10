@@ -27,6 +27,7 @@ io.on('connection', (socket) => { // Обработка подключения �
   
     // Обработка захода в комнату
     socket.on('join_room', (data) => {
+        socket.emit('clearing_messages-area');
         const {room} = data; // Деструктуризируем объект
         console.log(room.roomLogin)
         socket.join(room.roomLogin) // Подключаем пользователя к комнате

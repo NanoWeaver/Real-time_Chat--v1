@@ -15,7 +15,7 @@ const NavigationMessage = ({ socket, userLogin, setRoom }) => { // Опреде�
     const updateListRooms = async () => {
       const userRoomsList = await getUserRooms(userLogin); // Получаем комнаты пользователя
       const userRoomsObjectArr = []; // Создаём массив для переноса информации о комнатах
-      console.log(userRoomsList)
+      console.log('userRoomsList = ' + userRoomsList)
       // Проходим по всем логинам комнта из объекта пользователя и получаем объекты этих комнат
       for (let i = 0; i < userRoomsList.length; i++) {
         let room = await roomSearchDatabase(userRoomsList[i]);

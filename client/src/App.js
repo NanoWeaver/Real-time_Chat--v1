@@ -1,5 +1,5 @@
 import './App.css'; // Ипорт стилей для приложения
-import { useState } from 'react'; // Импорт хука useState
+import { useState, useEffect } from 'react'; // Импорт хука useState
 import Home from './pages/home/index.js'; // Импорт компонента Home для отображения на главное странице
 import Chat from './pages/chat/index.js'; // Импорт компонента Chat, который будет отображаться на странице чата
 import Registr from './pages/registration/index.js'; // Импорт компонента Registr, который будет отображаться на странице регистрации
@@ -13,6 +13,27 @@ function App() { // Oпределение функционального ком�
   const [room, setRoom] = useState(''); // Cоздание состояния room, которое будет хранить имя комнаты чата, setRoom — функция для его обновления
   const [userLogin, setUserLogin] = useState(''); // Cоздание состояния userLogin, которое будет хранить имя пользователя, setUserLogin — функция для его обновления
   const [userPassword, setUserPassword] = useState(''); // Cоздание состояния userPassword, которое будет хранить пароль пользователя, setUserPassword — функция для его обновления
+
+   // Загружаем данные из localStorage при монтировании
+   useEffect(() => {
+    const savedUserName = localStorage.getItem('userName');
+    const savedUserLogin = localStorage.getItem('userLogin');
+    const savedUserPassword = localStorage.getItem('userPassword');
+    const savedRoom = localStorage.getItem('room');
+
+    if (savedUserName) setUserName(savedUserName);
+    if (savedUserLogin) setUserLogin(savedUserLogin);
+    if (savedUserPassword) setUserPassword(savedUserPassword);
+    if (savedRoom) setRoom(savedRoom);
+  }, []);
+
+  // Сохраняем данные в localStorage при изменении состояния
+  useEffect(() => {
+    localStorage.setItem('userName', userName);
+    localStorage.setItem('userLogin', userLogin);
+    localStorage.setItem('userPassword', userPassword);
+    localStorage.setItem('room', room);
+  }, [userName, userLogin, userPassword, room]);
 
   return ( // Настройка маршрутизации 
     <Router>

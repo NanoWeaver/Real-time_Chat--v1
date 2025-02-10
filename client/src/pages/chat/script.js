@@ -71,6 +71,6 @@ export async function getUserRooms(userLogin) {
     // Получаем пользователя
     const userDoc = await userSearchDatabase(userLogin);
     // Получаем его список чатов
-    const userRooms = userDoc.userRooms;
+    const userRooms = userDoc.userRooms || [];
     return userRooms
 }
