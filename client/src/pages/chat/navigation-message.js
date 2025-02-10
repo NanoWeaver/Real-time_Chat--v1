@@ -3,28 +3,42 @@ import { useState, useEffect, useRef } from 'react'; // Импорт хуков 
 import { validationUserName, validationUserLogin} from '../../validation/index.js'; // Импортируем функции
 import {getUserRooms, roomSearchDatabase} from './script.js' // Импорт функции получения списка комнат пользователя
 
-const NavigationMessage = ({ socket, userLogin }) => { // Определение компонента Massages с одним промтом 
+const NavigationMessage = ({ socket, userLogin, setRoom }) => { // Определение компонента Massages с одним промтом 
   const [creatingChat, setCreatingChat] = useState(false);
   const [addingChat, setAddChat] = useState(false);
   const [rooms, setRooms] = useState([]);
   const roomNameRef = useRef(null);
   const roomLoginRef = useRef(null);
 
+  // Логика для отображения чатов пользователя
   useEffect(() => {
     const updateListRooms = async () => {
       const userRoomsList = await getUserRooms(userLogin); // Получаем комнаты пользователя
-      const userRoomsObjectArr = [];
+      const userRoomsObjectArr = []; // Создаём массив для переноса информации о комнатах
       console.log(userRoomsList)
+      // Проходим по всем логинам комнта из объекта пользователя и получаем объекты этих комнат
       for (let i = 0; i < userRoomsList.length; i++) {
         let room = await roomSearchDatabase(userRoomsList[i]);
         console.log('Объект комнаты' + room)
         userRoomsObjectArr.push(room);
       }
-      setRooms(userRoomsObjectArr); // Обновляем состояние
+      setRooms(userRoomsObjectArr); // Обновляем состояние предовая массив объектов комнат
       console.log(userRoomsObjectArr)
     };
     updateListRooms();
+    
+    // Функция очистки
+    return () => {
+      console.log('Компонент размонтирован или userLogin изменился');
+    };
   },[userLogin])
+
+  // Скрипт для открытия чата
+  const handleRoomClick = (room) => {
+    console.log(room)
+    socket.emit('join_room', {room}); // Отправляем событие на сервер
+    setRoom(room.roomLogin) // Обновляем состояние комнаты
+  }
 
   // Скрипт для открытия окна создания чата
   const showChatCreationForm = () => {
@@ -108,17 +122,17 @@ const NavigationMessage = ({ socket, userLogin }) => { // Определение
           <div className='navigation-message__rooms-wrapper'>
             {
               rooms.length >= 1 ? (
-                <div className="navigation-message">
+                <div className="list-massages">
                   {rooms.map((room) => (
-                    <div >
-                      <h2>{room.roomName}</h2>
-                      <p>
-                        <span>{room.lastMessage?.sender}</span>
+                    <div key={room.roomLogin} className='message-wrapper' onClick = {() => handleRoomClick(room)}>
+                      <h2 className='message-wrapper__heading'>{room.roomName}</h2>
+                      <p className='message-wrapper__last-message-text'>
+                        <span className='message-wrapper__last-message-time'>{room.lastMessage?.sender}</span>
                         {room.lastMessage?.text}
                       </p>
                     </div>
                   ))}
-              </div>
+                </div>
               ) : (
                 <div>
                   У вас пока нет чатов

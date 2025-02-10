@@ -25,42 +25,24 @@ let allUsers = []; // Массив для хранения всех пользо
 io.on('connection', (socket) => { // Обработка подключения пользователей , слушаем событие connection
     console.log(`User connected ${socket.id}`); // Выводим id пользователя в консоль
   
-    // // Обработка события присоединения к комнате, слушаем событие join_room
-    // socket.on('join_room', (data) => {
-    //     const { username, room } = data; // Извлекаем имя пользователя и название комнаты
-    //     socket.join(room); // Подключаем пользователя к комнате
+    // Обработка захода в комнату
+    socket.on('join_room', (data) => {
+        const {room} = data; // Деструктуризируем объект
+        console.log(room.roomLogin)
+        socket.join(room.roomLogin) // Подключаем пользователя к комнате
+        console.log('Пользователь подключен к комнате ' + room.roomLogin)
+    });
 
-    //     let createdtime = Date.now(); // Запоминаем время подключения 
-
-    //     // Отправляем всем в комнает уведомление о подключении нового пльзователя (кроме пользователя)
-    //     socket.to(room).emit('receive_message', {
-    //         message: `${username} Присоединился к чату`, // Само сообщение
-    //         username: CHAT_BOT, // Имя отправителя
-    //         createdtime, // Время отправления 
-    //     });
-
-    //     // Отправляем сообщение новому пользователю
-    //     socket.emit('receive_message', {
-    //         message: `Добро пожаловать ${username}`, // Само сообщение
-    //         username: CHAT_BOT, // Имя отправителя
-    //         createdtime, // Время отправления 
-    //       });
-
-    //     // Обновление списка пользователей
-    //     chatRoom = room; // Сохраняем название комнаты
-    //     allUsers.push({ id: socket.id, username, room }); // Добавляем в массив объект нового пользователя
-    //     // Создаем массив только с теми пользователями ,Что находятся в этой же комнате
-    //     let chatRoomUsers = allUsers.filter((user) => user.room === room); 
-    //     // Сервер отправляет список пользователей всем подключенным клиентам в комнате, за исключением отправителя.
-    //     socket.to(room).emit('chatroom_users', chatRoomUsers);
-    //     // Здесь сервер отправляет то же самое событие только что подключившемуся пользователю
-    //     socket.emit('chatroom_users', chatRoomUsers);
-    // });
-
-    // // Обработка отрправки сообщения пользователем
-    // socket.on('send_message', (data) => {
-    //     io.to(data.room).emit('receive_message', data); // Отправляем всем пользователям в комнате
-    // })
+    // Обработка отправки сообщения пользователем
+    socket.on('send_message', (data) => {
+        const { room, message, userName, createdtime } = data;
+        console.log('Пользовател с именем ' + userName + ' отправил сообщение')
+        io.to(room).emit('receive_message', { // Отправляем сообщение всем в комнате
+            message,
+            userName,
+            createdtime,
+        });
+    });
 
     // Обработка запроса на регистрацию
     socket.on('send_registr', async (data) => {
