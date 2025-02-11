@@ -12,19 +12,6 @@ const NavigationMessage = ({ socket, userLogin, setRoom }) => { // Опреде�
 
   // Логика для отображения чатов пользователя
   useEffect(() => {
-    const updateListRooms = async () => {
-      const userRoomsList = await getUserRooms(userLogin); // Получаем комнаты пользователя
-      const userRoomsObjectArr = []; // Создаём массив для переноса информации о комнатах
-      console.log('userRoomsList = ' + userRoomsList)
-      // Проходим по всем логинам комнта из объекта пользователя и получаем объекты этих комнат
-      for (let i = 0; i < userRoomsList.length; i++) {
-        let room = await roomSearchDatabase(userRoomsList[i]);
-        console.log('Объект комнаты' + room)
-        userRoomsObjectArr.push(room);
-      }
-      setRooms(userRoomsObjectArr); // Обновляем состояние предовая массив объектов комнат
-      console.log(userRoomsObjectArr)
-    };
     updateListRooms();
     
     // Функция очистки
@@ -37,8 +24,49 @@ const NavigationMessage = ({ socket, userLogin, setRoom }) => { // Опреде�
   const handleRoomClick = (room) => {
     console.log(room)
     socket.emit('join_room', {room}); // Отправляем событие на сервер
-    setRoom(room.roomLogin) // Обновляем состояние комнаты
+    setRoom(room) // Обновляем состояние комнаты
   }
+
+  // Логика обновления чатов пользователя при создании/добавлении комнаты
+  useEffect(() => {
+    socket.on('rooms_updated', updateListRooms);
+  
+    return () => {
+      socket.off('rooms_updated', updateListRooms);
+    };
+  }, [userLogin]);
+
+  // Логика обновления чатов пользователя при изминении поледнего сообщения
+  useEffect(() => {
+    socket.on('last_message_updated', async (data) => {
+      setRooms(prevRooms => 
+        prevRooms.map(room => 
+          room.roomLogin === data.roomLogin 
+            ? { ...room, lastMessage: data.lastMessage } 
+            : room
+        )
+      );
+    });
+  
+    return () => {
+      socket.off('last_message_updated');
+    };
+  }, []);
+
+  // Обновление комнат пользователя
+  const updateListRooms = async () => {
+    const userRoomsList = await getUserRooms(userLogin); // Получаем комнаты пользователя
+    const userRoomsObjectArr = []; // Создаём массив для переноса информации о комнатах
+    console.log('userRoomsList = ' + userRoomsList)
+    // Проходим по всем логинам комнта из объекта пользователя и получаем объекты этих комнат
+    for (let i = 0; i < userRoomsList.length; i++) {
+      let room = await roomSearchDatabase(userRoomsList[i]);
+      console.log('Объект комнаты' + room)
+      userRoomsObjectArr.push(room);
+    }
+    setRooms(userRoomsObjectArr); // Обновляем состояние предовая массив объектов комнат
+    console.log(userRoomsObjectArr)
+  };
 
   // Скрипт для открытия окна создания чата
   const showChatCreationForm = () => {
@@ -126,10 +154,8 @@ const NavigationMessage = ({ socket, userLogin, setRoom }) => { // Опреде�
                   {rooms.map((room) => (
                     <div key={room.roomLogin} className='message-wrapper' onClick = {() => handleRoomClick(room)}>
                       <h2 className='message-wrapper__heading'>{room.roomName}</h2>
-                      <p className='message-wrapper__last-message-text'>
-                        <span className='message-wrapper__last-message-time'>{room.lastMessage?.sender}</span>
-                        {room.lastMessage?.text}
-                      </p>
+                      <span>{new Date(room.lastMessage?.createdtime).toLocaleString()}</span>
+                      <p><span>{room.lastMessage?.userSenderName}:</span> {room.lastMessage?.message}</p>
                     </div>
                   ))}
                 </div>

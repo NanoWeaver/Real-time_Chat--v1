@@ -1,5 +1,5 @@
 import { db } from '../../firebase.js';
-import { collection, getDocs, addDoc, query, where, updateDoc, doc } from "firebase/firestore";
+import { collection, getDocs, addDoc, query, where, updateDoc, doc, orderBy } from "firebase/firestore";
 import {userSearchDatabase} from '../registration/script.js'
 
 // Функция поиска комнаты в базе данных
@@ -28,7 +28,12 @@ export async function registerRoom(roomName, roomLogin) {
         const roomDoc = await addDoc(collection(db, "rooms"), {
             roomName: roomName,
             roomLogin: roomLogin,
-            roomUsers: []
+            roomUsers: [],
+            lastMessage: {
+                userSenderName: '',
+                createdtime: '',
+                message: ''
+            }
         });
         console.log("Комната создана с ID:",  roomDoc.id);
     } catch (e) {
@@ -73,4 +78,53 @@ export async function getUserRooms(userLogin) {
     // Получаем его список чатов
     const userRooms = userDoc.userRooms || [];
     return userRooms
+}
+
+// Функция добавления сообщения в базу данных
+export async function addMessage(roomLogin, message, userName, userLogin, createdtime) {
+    try {
+        const messageDoc = await addDoc(collection(db, "messages"), {
+            roomLogin, 
+            message, 
+            userName, 
+            userLogin, 
+            createdtime
+        });
+        console.log("Сообщение сохранено с ID:",  messageDoc.id);
+    } catch (e) {
+        console.error("Ошибка сохранения сообщения:", e);
+    }
+}
+
+// Функция загрузики истории собщений для определённой комнаты
+export async function getMessagesRoom(roomLogin, limit = 20) {
+    // Получили колекцию сообщений
+    const collectionMessages = await collection(db, 'messages');
+    // Формируем запрос к бд
+    const request = await query(collectionMessages, where('roomLogin', '==', roomLogin),orderBy('createdtime', 'desc'));
+    // Получаем результаты поиска
+    const messageSnapshot = await getDocs(request)
+
+  return messageSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+}
+
+// Функция изминения данных последнего сообщения в комнате
+export async function changingLastMessage(userName, roomLogin, message, createdtime) {
+    // Получаем комнату
+    console.log('Получаем комнату для обновления полседнего сообщения с именем ' + roomLogin + 'с текстом ' + message)
+    const roomDoc = await roomSearchDatabase(roomLogin);
+    // Создаём новый объект последнего сообщения
+    const roomLastMessageNew = {
+        userSenderName: userName,
+        createdtime,
+        message
+    };
+    // Получаем ссылку на документ комнаты
+    const roomRef = doc(db, 'rooms', roomDoc.id);
+    // Перезаписываем данные
+    await updateDoc(roomRef, {
+        lastMessage : roomLastMessageNew
+    })
+
+    return roomLastMessageNew;
 }

@@ -4,7 +4,7 @@ import http from 'http'; // Импортируем встроенный моду
 import cors from 'cors'; // Импортируем библиотека для принятия запросов из других доменов
 import { Server } from 'socket.io'; // Импортируем класс с помощью деструктуризации объекта  
 import { userSearchDatabase, verifyinUserPassword, registerUser } from '../client/src/pages/registration/script.js'; // Импортируем наши функции работы с бд 
-import { roomSearchDatabase, registerRoom, addingRoomUser, addingUserRoom } from '../client/src/pages/chat/script.js'; // Импортируем наши функции работы с бд 
+import { roomSearchDatabase, registerRoom, addingRoomUser, addingUserRoom, addMessage, changingLastMessage } from '../client/src/pages/chat/script.js'; // Импортируем наши функции работы с бд 
 app.use(cors()); // Добавляем промежуточное CORS ПО , для обработки запросов с других доменов
 
 const server = http.createServer(app); // Создаём HTTP сервер с помощью экземпляра Express
@@ -27,22 +27,28 @@ io.on('connection', (socket) => { // Обработка подключения �
   
     // Обработка захода в комнату
     socket.on('join_room', (data) => {
-        socket.emit('clearing_messages-area');
         const {room} = data; // Деструктуризируем объект
-        console.log(room.roomLogin)
+        socket.emit('loading_message_history', room); // Отправляем событие для загрузки сообщений
+        console.log('Подключаем пользователя к комнате ' + room.roomLogin)
         socket.join(room.roomLogin) // Подключаем пользователя к комнате
         console.log('Пользователь подключен к комнате ' + room.roomLogin)
     });
 
     // Обработка отправки сообщения пользователем
-    socket.on('send_message', (data) => {
-        const { room, message, userName, createdtime } = data;
+    socket.on('send_message', async (data) => {
+        const { room, message, userName, userLogin, createdtime } = data;
         console.log('Пользовател с именем ' + userName + ' отправил сообщение')
-        io.to(room).emit('receive_message', { // Отправляем сообщение всем в комнате
+        io.to(room.roomLogin).emit('receive_message', { // Отправляем сообщение всем в комнате
             message,
             userName,
             createdtime,
         });
+        // Добавляем сообщение в бд
+        await addMessage(room.roomLogin, message, userName, userLogin, createdtime )
+        // Изминяем последнее собщение в комнате
+        const lastMessage = await changingLastMessage(userName, room.roomLogin, message,  createdtime)
+        // Отправляем событие обновления последнего сообщения
+        io.emit('last_message_updated', { roomLogin: room.roomLogin, lastMessage});
     });
 
     // Обработка запроса на регистрацию
@@ -87,6 +93,8 @@ io.on('connection', (socket) => { // Обработка подключения �
             await addingRoomUser(data.userLogin, data.roomLogin);
             // Затем добавлем пользователя в объект комнаты
             await addingUserRoom(data.userLogin, data.roomLogin)
+            // Отправляем событие обновления клиенту
+            io.emit('rooms_updated', { userLogin: data.userLogin });
         } else {
             console.log('Комната уже создана')
         }
@@ -104,6 +112,8 @@ io.on('connection', (socket) => { // Обработка подключения �
             await addingRoomUser(data.userLogin, data.roomLogin);
             // Затем добавлем пользователя в объект комнаты
             await addingUserRoom(data.userLogin, data.roomLogin)
+            // Отправляем событие обновления клиенту
+            io.emit('rooms_updated', { userLogin: data.userLogin });
         }
     })
 });

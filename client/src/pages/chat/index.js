@@ -10,7 +10,7 @@ const Chat = ({ userName, room, socket, userLogin, setRoom }) => { // Он пр�
         <NavigationMessage socket={socket} userLogin = {userLogin} setRoom = {setRoom} />
         <div className='connectify__chat-area'>
           <MessagesArea socket={socket} userName={userName} room={room}/>
-          <SendMessage socket={socket} userName={userName} room={room} />
+          <SendMessage socket={socket} userName={userName} room={room} userLogin = {userLogin}/>
         </div>
     </div>
   );
