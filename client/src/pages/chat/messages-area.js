@@ -42,15 +42,27 @@ const MessagesArea = ({ socket, userName, room }) => { // Определение
 
   return ( // Возвращаем JSX
     <div className='messages-area'>
-      <h1>{room.roomName}</h1>
-    {messagesReceived.map((msg, i) => (
-      <div key={i} className='message'>
-        <div>
-          <span>{msg.userName} </span> <span>{new Date(msg.createdtime).toLocaleString()}</span>
-        </div>
-        <p>{msg.message}</p>
+      <div className='messages-area__head'>
+        <img className='messages-area__logo' src='/images/userIcon.webp' alt='Иконка пользователя' width={42} height={42}/>
+        <h1 className='messages-area__heading'>{room.roomName}</h1>
+        <button className='messages-area__option'>
+        <svg className='messages-area__option-svg' width="5" height="20" viewBox="0 0 5 20" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="2.5" cy="17.5" r="2" />
+          <circle cx="2.5" cy="10" r="2"/>
+          <circle cx="2.5" cy="2.5" r="2" />
+        </svg>
+        </button>
       </div>
-    ))}
+      <div className='messages-area__content'>
+        {messagesReceived.map((msg, i) => (
+        <div key={i} className='message__wrapper'>
+          <div>
+            <span>{msg.userName} </span> <span>{new Date(msg.createdtime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+          </div>
+          <p>{msg.message}</p>
+        </div>
+      ))}
+      </div>
   </div>
   );
 };

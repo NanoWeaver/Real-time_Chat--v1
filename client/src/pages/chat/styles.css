@@ -14,6 +14,7 @@ html {
     display: flex;
     flex-direction: column;
     row-gap: 3%;
+    height: 100%;
 }
 
 .navigation-message {
@@ -43,22 +44,67 @@ html {
 }
 
 .navigation-message__rooms-wrapper {
-    padding: 5%;
+    padding: 5% 0;
 }
 
 .list-massages {
     display: flex;
     flex-direction: column;
-    row-gap: 20px;
+    row-gap: 10px;
 }
 
 .message-wrapper {
     cursor: pointer;
+    display: flex;
+    column-gap: 10px;
     background-color: var(--message-background-color);
+    padding: 10px;
+}
+
+.message-wrapper__logo {
+    display: block;
+    border-radius: 50%;
+}
+
+.message-wrapper__text-wrapper {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.message-wrapper__head {
+    display: flex;
+    justify-content: space-between;
 }
 
 .message-wrapper__heading {
     font-size: 1em;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.message-wrapper__time {
+    color: var(--secondary-text-color);
+    font-size: 0.75em;
+}
+
+.message-wrapper__footer {
+    max-width: 100%;
+}
+
+.message-wrapper__text {
+    margin: 0;
+    color: var(--secondary-text-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.message-wrapper__user-name {
+    color: var(--primary-text-color);
 }
 
 .--create-chat {
@@ -109,16 +155,69 @@ html {
 }
 
 .messages-area {
+    flex-grow: 1;
     background-color: var(--message-background-color);
     height: 100%;
     border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.messages-area__head {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 15px;
+    z-index: 1;
+}
+
+.messages-area__logo {
+    border-radius: 50%;
+}
+
+.messages-area__heading {
+    font-size: 1.3em;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.messages-area__option {
+    cursor: pointer;
+    border: 0;
+    background-color: transparent;
+    padding: 0;
+    width: 42px;
+}
+
+.messages-area__option-svg {
+    fill: var(--primary-text-color);
+}
+
+.messages-area__content {
+    flex-grow: 1; 
+    overflow-y: auto; 
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+
+.message__wrapper {
+    background-color: var(--primary-background-color);
+    width: fit-content;
+
+    max-width: 450px;
 }
 
 .send-message {
+    flex-shrink: 0;
     display: flex;
     justify-content: space-between;
     min-height: 50px;
-    height: 5%;
+    height: auto;
 }
 
 .send-message__message-input {

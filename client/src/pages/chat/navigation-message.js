@@ -153,9 +153,18 @@ const NavigationMessage = ({ socket, userLogin, setRoom }) => { // Опреде�
                 <div className="list-massages">
                   {rooms.map((room) => (
                     <div key={room.roomLogin} className='message-wrapper' onClick = {() => handleRoomClick(room)}>
-                      <h2 className='message-wrapper__heading'>{room.roomName}</h2>
-                      <span>{new Date(room.lastMessage?.createdtime).toLocaleString()}</span>
-                      <p><span>{room.lastMessage?.userSenderName}:</span> {room.lastMessage?.message}</p>
+                      <div className='message-wrapper__logo-wrapper'>
+                        <img className='message-wrapper__logo' src='/images/userIcon.webp' alt='Иконка пользователя' width={54} height={54}/>
+                      </div>
+                      <div className='message-wrapper__text-wrapper'>
+                        <div className='message-wrapper__head'>
+                          <h2 className='message-wrapper__heading'>{room.roomName}</h2>
+                          <span className='message-wrapper__time'>{new Date(room.lastMessage?.createdtime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        </div>
+                        <div className='message-wrapper__footer'>
+                        <p className='message-wrapper__text'><span className='message-wrapper__user-name'>{room.lastMessage?.userSenderName}:</span> {room.lastMessage?.message}</p>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
