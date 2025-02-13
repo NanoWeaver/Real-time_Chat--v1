@@ -13,9 +13,10 @@ function App() { // Oпределение функционального ком�
   const [room, setRoom] = useState(''); // Cоздание состояния room, которое будет хранить объект комнаты чата, setRoom — функция для его обновления
   const [userLogin, setUserLogin] = useState(''); // Cоздание состояния userLogin, которое будет хранить имя пользователя, setUserLogin — функция для его обновления
   const [userPassword, setUserPassword] = useState(''); // Cоздание состояния userPassword, которое будет хранить пароль пользователя, setUserPassword — функция для его обновления
+  const [isLoading, setIsLoading] = useState(true); // Индикация загружены ли все данные пользователя
 
    // Загружаем данные из localStorage при монтировании
-   useEffect(() => {
+  useEffect(() => {
     const savedUserName = localStorage.getItem('userName');
     const savedUserLogin = localStorage.getItem('userLogin');
     const savedUserPassword = localStorage.getItem('userPassword');
@@ -25,6 +26,8 @@ function App() { // Oпределение функционального ком�
     if (savedUserLogin) setUserLogin(savedUserLogin);
     if (savedUserPassword) setUserPassword(savedUserPassword);
     if (savedRoom) setRoom(savedRoom);
+
+    setIsLoading(false);
   }, []);
 
   // Сохраняем данные в localStorage при изменении состояния
@@ -34,6 +37,9 @@ function App() { // Oпределение функционального ком�
     localStorage.setItem('userPassword', userPassword);
     localStorage.setItem('room', room);
   }, [userName, userLogin, userPassword, room]);
+
+
+  if (isLoading) return <div>Загрузка...</div>; // Пока данные не загружены 
 
   return ( // Настройка маршрутизации 
     <Router>

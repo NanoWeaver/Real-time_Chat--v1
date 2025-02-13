@@ -3,12 +3,13 @@ import { useState, useEffect, useRef } from 'react'; // Импорт хуков 
 import { validationUserName, validationUserLogin} from '../../validation/index.js'; // Импортируем функции
 import {getUserRooms, roomSearchDatabase} from './script.js' // Импорт функции получения списка комнат пользователя
 
-const NavigationMessage = ({ socket, userLogin, setRoom }) => { // Определение компонента Massages с одним промтом 
+const NavigationMessage = ({ socket, userLogin, setRoom, room }) => { // Определение компонента Massages с одним промтом 
   const [creatingChat, setCreatingChat] = useState(false);
   const [addingChat, setAddChat] = useState(false);
   const [rooms, setRooms] = useState([]);
   const roomNameRef = useRef(null);
   const roomLoginRef = useRef(null);
+  const [activeRoom, setActiveRoom] = useState(room) // Создаём состояние для хранения активной комнаты
 
   // Логика для отображения чатов пользователя
   useEffect(() => {
@@ -24,7 +25,8 @@ const NavigationMessage = ({ socket, userLogin, setRoom }) => { // Опреде�
   const handleRoomClick = (room) => {
     console.log(room)
     socket.emit('join_room', {room}); // Отправляем событие на сервер
-    setRoom(room) // Обновляем состояние комнаты
+    setRoom(room); // Обновляем состояние комнаты
+    setActiveRoom(room); // Обновляем состояние активной комнаты
   }
 
   // Логика обновления чатов пользователя при создании/добавлении комнаты
@@ -152,7 +154,7 @@ const NavigationMessage = ({ socket, userLogin, setRoom }) => { // Опреде�
               rooms.length >= 1 ? (
                 <div className="list-massages">
                   {rooms.map((room) => (
-                    <div key={room.roomLogin} className='message-wrapper' onClick = {() => handleRoomClick(room)}>
+                    <div key={room.roomLogin} className={`message-wrapper ${activeRoom.roomLogin === room.roomLogin ? 'message-wrapper--active' : ''}`} onClick = {() => handleRoomClick(room)}>
                       <div className='message-wrapper__logo-wrapper'>
                         <img className='message-wrapper__logo' src='/images/userIcon.webp' alt='Иконка пользователя' width={54} height={54}/>
                       </div>

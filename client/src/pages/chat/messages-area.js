@@ -1,9 +1,22 @@
 import './styles.css'; // Импортируем стили
-import { useState, useEffect } from 'react'; // Импорт хуков React
+import { useState, useEffect, useRef } from 'react'; // Импорт хуков React
 import {getMessagesRoom} from '../chat/script.js'
 
-const MessagesArea = ({ socket, userName, room }) => { // Определение компонента Massages с одним промтом 
+const MessagesArea = ({ socket, userName, userLogin, room }) => { // Определение компонента Massages с одним промтом 
   const [messagesReceived, setMessagesReceived] = useState([]); // Определяем состояние для хранения сообщений
+  const messagesEndRef = useRef(); // Будем получать ссылку на DOM последнего сообщения
+  const [numberUsers,setNumberUsers] = useState(0);
+
+  // Прокрутка чата до последнего сообщения 
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView();
+  }, [messagesReceived]);
+
+  useEffect(() => {
+    setNumberUsers(room.roomUsers?.length)
+    console.log(' Колличесвто пользователей в комнате = ' ,numberUsers)
+  }, [room])
+
 
   // Загрузка истории чата 
   useEffect(() => {
@@ -11,7 +24,16 @@ const MessagesArea = ({ socket, userName, room }) => { // Определение
       console.log('Загружаем историю чата из комнаты ' + data.roomName)
       const massagesList = await getMessagesRoom(data.roomLogin);
       console.log('Массив объектов сообщений для этой комнаты:', massagesList)
-      setMessagesReceived(massagesList.reverse())
+      // Перебираем объекты сообщений для маркировки по типо От пользователя или Нет
+      const massagesListFinal = massagesList.map(msg => {
+        console.log('Переделываем объект сообщения и определяес значение isCurrentUser')
+        console.log('Логин отправителя = ' + msg.userLogin + ' А логин текущего пользователя ' + userLogin)
+        return {
+          ...msg,
+          isCurrentUser: msg.userLogin === userLogin
+        }
+      })
+      setMessagesReceived(massagesListFinal.reverse())
     })
   })
 
@@ -24,17 +46,21 @@ const MessagesArea = ({ socket, userName, room }) => { // Определение
   useEffect(() => {
     socket.on('receive_message', (data) => { // Обрабатывем сообщение с сервера
       console.log('Отобразили сообщение от пользователя с ником ' + userName)
+      const isCurrentUser = data.userLogin === userLogin // Кто автор сообщения пользователь или нет
       setMessagesReceived((prev) => [
         ...prev,
         {
           message: data.message,
           userName: data.userName,
           createdtime: data.createdtime,
+          isCurrentUser
         },
       ]);
+      console.log('Приняли и отобразили сообщение пользователя в чате')
+      console.log('Логин пользователя ' + userLogin + '. Имя пользователя ' + userName)
+      console.log('ID сообщения ' , data)
     });
-    console.log('Приняли и отобразили сообщение пользователя в чате ' )
-  
+    
     return () => {
       socket.off('receive_message'); // Отписываемся от события при размонтировании
     };
@@ -44,22 +70,27 @@ const MessagesArea = ({ socket, userName, room }) => { // Определение
     <div className='messages-area'>
       <div className='messages-area__head'>
         <img className='messages-area__logo' src='/images/userIcon.webp' alt='Иконка пользователя' width={42} height={42}/>
-        <h1 className='messages-area__heading'>{room.roomName}</h1>
+        <div className='messages-area__info-wrapper'>
+          <h1 className='messages-area__heading'>{room.roomName}</h1>
+          <span className='messages-area__number-users'>{numberUsers} участников</span>
+        </div>
         <button className='messages-area__option'>
-        <svg className='messages-area__option-svg' width="5" height="20" viewBox="0 0 5 20" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="2.5" cy="17.5" r="2" />
-          <circle cx="2.5" cy="10" r="2"/>
-          <circle cx="2.5" cy="2.5" r="2" />
-        </svg>
+          <svg className='messages-area__option-svg' width="5" height="20" viewBox="0 0 5 20" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="2.5" cy="17.5" r="2" />
+            <circle cx="2.5" cy="10" r="2"/>
+            <circle cx="2.5" cy="2.5" r="2" />
+          </svg>
         </button>
       </div>
       <div className='messages-area__content'>
         {messagesReceived.map((msg, i) => (
-        <div key={i} className='message__wrapper'>
-          <div>
-            <span>{msg.userName} </span> <span>{new Date(msg.createdtime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+        <div  key={msg.createdtime} ref={messagesEndRef} className={`message__box message__box--${msg.isCurrentUser ? 'you' : 'they'}`}>
+          <div key={i} className={`message__wrapper message__wrapper--${msg.isCurrentUser ? 'you' : 'they'}`}>
+          <div className='message__head'>
+            <span className='message__user-name'>{msg.userName} </span> <span className='message__time'>{new Date(msg.createdtime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
           </div>
-          <p>{msg.message}</p>
+          <p className='message__text'>{msg.message}</p>
+        </div>
         </div>
       ))}
       </div>

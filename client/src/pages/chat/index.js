@@ -7,9 +7,9 @@ import NavigationMessage from './navigation-message.js'
 const Chat = ({ userName, room, socket, userLogin, setRoom }) => { // Он принимает три пропса
   return ( // Возвращаемый JSX:
     <div className='connectify'>
-        <NavigationMessage socket={socket} userLogin = {userLogin} setRoom = {setRoom} />
+        <NavigationMessage socket={socket} userLogin = {userLogin} setRoom = {setRoom} room={room}/>
         <div className='connectify__chat-area'>
-          <MessagesArea socket={socket} userName={userName} room={room}/>
+          <MessagesArea socket={socket} userName={userName} room={room} userLogin = {userLogin}/>
           <SendMessage socket={socket} userName={userName} room={room} userLogin = {userLogin}/>
         </div>
     </div>

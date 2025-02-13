@@ -42,6 +42,7 @@ io.on('connection', (socket) => { // Обработка подключения �
             message,
             userName,
             createdtime,
+            userLogin
         });
         // Добавляем сообщение в бд
         await addMessage(room.roomLogin, message, userName, userLogin, createdtime )

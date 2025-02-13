@@ -14,6 +14,7 @@ const SendMessage = ({ socket, userName, userLogin, room }) => {
       socket.emit('send_message', { userName, room, message, userLogin, createdtime });
       setMessage(''); // Сбрасываем состояние на пустую строку
     }
+    console.log('Отпраили сообщение от ' + 'Логин пользователя ' + userLogin + '. Имя пользователя ' + userName)
   };
 
   return ( // Возврат JSX-разметки
@@ -23,6 +24,11 @@ const SendMessage = ({ socket, userName, userLogin, room }) => {
         placeholder='Message...'
         onChange={(e) => setMessage(e.target.value)} // Обновление состояние при вводе текста
         value={message}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            sendMessage();
+          }
+        }}
       />
       <button className='send-message__message-button' onClick={sendMessage}>
         Отправить сообщение
