@@ -28,9 +28,9 @@ html {
 
 .navigation-message__button-wrapper {
     display: flex;
+    align-items: center;
     column-gap: 3%;
-    min-height: 30px;
-    height: 7%;
+    height: 50px;
 }
 
 .navigation-message__button {
@@ -40,11 +40,97 @@ html {
     border-radius: 5px;
     color: var(--primary-text-color);
     font-size: 1em;
-    background-color: var(--primary-button-color);
+    padding: 6px;
+}
+
+.navigation-message__setting {
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    border: 0;
+    background-color: transparent;
+    padding: 5px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.navigation-message__setting:hover {
+    background-color: var(--secondary-background-color);
+}
+
+.navigation-message__setting:active .navigation-message__setting-svg {
+    stroke: var(--secondary-text-color);
+}
+
+.navigation-message__setting-svg {
+    stroke: var(--primary-text-color);
+    fill: transparent;
+    transition:  stroke 0.1s ease-in-out;
+}
+
+
+.navigation-message__options {
+    cursor: pointer;
+    padding:0;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    border: 0;
+    background-color: transparent;
+    padding: 5px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.navigation-message__options:hover {
+    background-color: var(--secondary-background-color);
+}
+
+.navigation-message__options:active  .navigation-message__options-svg {
+    stroke: var(--secondary-text-color);
+}
+
+
+.navigation-message__options-svg {
+    stroke: var(--primary-text-color);
+    transition: stroke 0.1s ease-in-out;
+}
+
+.navigation-message__search-input {
+    flex-grow: 1;
+    height: 30px;
+    font-size: 1em;
+}
+
+.navigation-message__search-button {
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    border: 0;
+    padding: 5px;
+    background-color: transparent;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.navigation-message__search-button:hover {
+    background-color: var(--secondary-background-color);
+}
+
+.navigation-message__search-button:active .navigation-message__search-svg {
+    stroke: var(--secondary-text-color);
+}
+
+.navigation-message__search-svg {
+    stroke: var(--primary-text-color);
+    fill: transparent;
+    transition: stroke 0.1 ease-in-out;
 }
 
 .navigation-message__rooms-wrapper {
     padding: 5% 0;
+    overflow-y: auto;
 }
 
 .list-massages {
@@ -122,6 +208,10 @@ html {
 
 .--create-chat {
     background-color: var(--secondary-button-color);
+}
+
+.--add-chat {
+    background-color: var(--primary-button-color);
 }
 
 .chat-form {

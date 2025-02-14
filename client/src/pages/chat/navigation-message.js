@@ -10,6 +10,7 @@ const NavigationMessage = ({ socket, userLogin, setRoom, room }) => { // Опр�
   const roomNameRef = useRef(null);
   const roomLoginRef = useRef(null);
   const [activeRoom, setActiveRoom] = useState(room) // Создаём состояние для хранения активной комнаты
+  const [optionsСovered, setOptionsСovered] = useState(false)
 
   // Логика для отображения чатов пользователя
   useEffect(() => {
@@ -70,6 +71,16 @@ const NavigationMessage = ({ socket, userLogin, setRoom, room }) => { // Опр�
     console.log(userRoomsObjectArr)
   };
 
+  // Скрипт для открытия опций
+  const openOptions = () => {
+    setOptionsСovered(true)
+  }
+
+   // Скрипт для закрытия опций
+   const closeOptions = () => {
+    setOptionsСovered(false)
+  }
+
   // Скрипт для открытия окна создания чата
   const showChatCreationForm = () => {
     setAddChat(false);
@@ -126,10 +137,47 @@ const NavigationMessage = ({ socket, userLogin, setRoom, room }) => { // Опр�
 
   return ( // Возвращаем JSX
     <div className='navigation-message'>
-      <div className='navigation-message__button-wrapper'>
-        <button className='navigation-message__button --create-chat' onClick={showChatCreationForm}>Создать чат</button>
-        <button className='navigation-message__button --add-chat' onClick={showChatAddForm}>Добавить чат</button>
-      </div>
+      
+        {
+          optionsСovered ? (
+            <div className='navigation-message__button-wrapper'>
+              <button className='navigation-message__options' onClick={closeOptions}>
+                <svg className='navigation-message__options-svg' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20" width="30px" height="20px">
+                  <line style={{strokeWidth:2,strokeLinecap:'round',strokeMiterlimit:10}} x1="28" y1="9" x2="2" y2="9"/>
+                  <line style={{strokeWidth:2,strokeLinecap:'round',strokeMiterlimit:10}} x1="28" y1="2" x2="2" y2="2"/>
+                  <line style={{strokeWidth:2,strokeLinecap:'round',strokeMiterlimit:10}} x1="28" y1="16" x2="2" y2="16"/>
+                </svg>
+              </button>
+              <button className='navigation-message__button --create-chat' onClick={showChatCreationForm}>Создать чат</button>
+              <button className='navigation-message__button --add-chat' onClick={showChatAddForm}>Добавить чат</button>
+              <button className='navigation-message__setting'>
+                <svg className='navigation-message__setting-svg' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="20px" height="20px">
+                  <path style={{strokeWidth:4,strokeLinecap:'round',strokeLinejoin:'round',strokeMiterlimit:10}} d="M46.999,27.708v-5.5l-6.546-1.07c-0.388-1.55-0.996-3.007-1.798-4.342l3.815-5.437L38.58,7.472l-5.368,3.859c-1.338-0.81-2.805-1.428-4.366-1.817L27.706,3h-5.5l-1.06,6.492c-1.562,0.383-3.037,0.993-4.379,1.799l-5.352-3.824l-3.889,3.887l3.765,5.384c-0.814,1.347-1.433,2.82-1.826,4.392l-6.464,1.076v5.5l6.457,1.145c0.39,1.568,1.009,3.041,1.826,4.391l-3.816,5.337l3.887,3.891l5.391-3.776c1.346,0.808,2.817,1.423,4.379,1.808L22.206,47h5.5l1.156-6.513c1.554-0.394,3.022-1.013,4.355-1.824l5.428,3.809l3.888-3.891l-3.875-5.38c0.802-1.335,1.411-2.794,1.795-4.344L46.999,27.708z"/>
+                  <circle style={{strokeWidth:4,strokeLinecap:'round',strokeLinejoin:'round',strokeMiterlimit:10}} cx="25" cy="25" r="5"/>
+                </svg>
+              </button>
+            </div>
+          ) : (
+            <div className='navigation-message__button-wrapper'>
+              <button className='navigation-message__options' onClick={openOptions}>
+                <svg className='navigation-message__options-svg' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20" width="30px" height="20px">
+                  <line style={{strokeWidth:2,strokeLinecap:'round',strokeMiterlimit:10}} x1="28" y1="9" x2="2" y2="9"/>
+                  <line style={{strokeWidth:2,strokeLinecap:'round',strokeMiterlimit:10}} x1="28" y1="2" x2="2" y2="2"/>
+                  <line style={{strokeWidth:2,strokeLinecap:'round',strokeMiterlimit:10}} x1="28" y1="16" x2="2" y2="16"/>
+                </svg>
+              </button>
+              <input className='navigation-message__search-input'/>
+              <button className='navigation-message__search-button' key="search">
+                <svg className='navigation-message__search-svg' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20px" height="20px">
+                  <circle stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" cx="8" cy="8" r="6"/>
+                  <line stroke-width="2" stroke-miterlimit="10" x1="11" y1="12" x2="18" y2="19"/>
+                </svg>
+              </button>
+            </div>
+          )
+        }
+        
+
       {
         creatingChat ? (
           <div className='chat-form'>
