@@ -122,3 +122,8 @@ io.on('connection', (socket) => { // Обработка подключения �
 app.get('/', (req, res) => { // Определение маршрута для корневого адреса
     res.send('Hello world');
 });
+
+const PORT = process.env.PORT || 4000; // Задайте порт, если PORT не установлен
+   server.listen(PORT, () => {
+       console.log(`Server is running on port ${PORT}`);
+   });
