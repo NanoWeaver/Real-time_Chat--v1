@@ -13,6 +13,7 @@ function App() { // Oпределение функционального ком�
   const [room, setRoom] = useState(''); // Cоздание состояния room, которое будет хранить объект комнаты чата, setRoom — функция для его обновления
   const [userLogin, setUserLogin] = useState(''); // Cоздание состояния userLogin, которое будет хранить имя пользователя, setUserLogin — функция для его обновления
   const [userPassword, setUserPassword] = useState(''); // Cоздание состояния userPassword, которое будет хранить пароль пользователя, setUserPassword — функция для его обновления
+  const [userAvatar, setUserAvatar] = useState(''); // Создание состояние userAvatar которое будет хранить сслку на аватар пользователя
   const [isLoading, setIsLoading] = useState(true); // Индикация загружены ли все данные пользователя
 
    // Загружаем данные из localStorage при монтировании
@@ -21,11 +22,13 @@ function App() { // Oпределение функционального ком�
     const savedUserLogin = localStorage.getItem('userLogin');
     const savedUserPassword = localStorage.getItem('userPassword');
     const savedRoom = localStorage.getItem('room');
+    const savedAvatar = localStorage.getItem('userAvatar')
 
     if (savedUserName) setUserName(savedUserName);
     if (savedUserLogin) setUserLogin(savedUserLogin);
     if (savedUserPassword) setUserPassword(savedUserPassword);
     if (savedRoom) setRoom(savedRoom);
+    if (savedAvatar) setUserAvatar(savedAvatar)
 
     setIsLoading(false);
   }, []);
@@ -36,7 +39,8 @@ function App() { // Oпределение функционального ком�
     localStorage.setItem('userLogin', userLogin);
     localStorage.setItem('userPassword', userPassword);
     localStorage.setItem('room', room);
-  }, [userName, userLogin, userPassword, room]);
+    localStorage.setItem('userAvatar', userAvatar)
+  }, [userName, userLogin, userPassword, room, userAvatar]);
 
 
   if (isLoading) return <div>Загрузка...</div>; // Пока данные не загружены 
@@ -56,6 +60,7 @@ function App() { // Oпределение функционального ком�
                 userPassword = {userPassword}
                 setUserPassword = {setUserPassword}
                 socket = {socket}
+                setUserAvatar = {setUserAvatar}
               />
             }
           />
@@ -71,11 +76,13 @@ function App() { // Oпределение функционального ком�
                 room = {room} 
                 setRoom = {setRoom}
                 socket = {socket}
+                setUserAvatar = {setUserAvatar}
+                userAvatar = {userAvatar}
               />}
           />
           <Route
             path='/registration'
-            element={<Registr socket={socket}/>}
+            element={<Registr socket={socket} setUserAvatar = {setUserAvatar} userAvatar={userAvatar} setUserLogin={setUserLogin} userLogin={userLogin}/>}
           />
         </Routes>
       </div>

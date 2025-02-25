@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'; // Импорт хуков 
 import { validationUserName, validationUserLogin} from '../../validation/index.js'; // Импортируем функции
 import {getUserRooms, roomSearchDatabase} from './script.js' // Импорт функции получения списка комнат пользователя
 
-const NavigationMessage = ({ socket, userLogin, setRoom, room }) => { // Определение компонента Massages с одним промтом 
+const NavigationMessage = ({ socket, userLogin, setRoom, room, userAvatar }) => { // Определение компонента Massages с одним промтом 
   const [creatingChat, setCreatingChat] = useState(false);
   const [addingChat, setAddChat] = useState(false);
   const [rooms, setRooms] = useState([]);
@@ -15,7 +15,7 @@ const NavigationMessage = ({ socket, userLogin, setRoom, room }) => { // Опр�
   // Логика для отображения чатов пользователя
   useEffect(() => {
     updateListRooms();
-    
+    console.log('Логин пользователя в компоненте navigation-massage :' + userLogin)
     // Функция очистки
     return () => {
       console.log('Компонент размонтирован или userLogin изменился');
@@ -204,7 +204,7 @@ const NavigationMessage = ({ socket, userLogin, setRoom, room }) => { // Опр�
                   {rooms.map((room) => (
                     <div key={room.roomLogin} className={`message-wrapper ${activeRoom.roomLogin === room.roomLogin ? 'message-wrapper--active' : ''}`} onClick = {() => handleRoomClick(room)}>
                       <div className='message-wrapper__logo-wrapper'>
-                        <img className='message-wrapper__logo' src='/images/userIcon.webp' alt='Иконка пользователя' width={54} height={54}/>
+                        <img className='message-wrapper__logo' src={userAvatar} alt='Иконка Чата' width={54} height={54}/>
                       </div>
                       <div className='message-wrapper__text-wrapper'>
                         <div className='message-wrapper__head'>

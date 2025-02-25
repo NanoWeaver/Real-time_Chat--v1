@@ -43,3 +43,19 @@
     color: var(--primary-text-color);
 
 }
+
+.avatar__preview {
+    display: block;
+    width: 100%;
+}
+
+.cropper-container {
+    width: 100%;
+}
+
+.buttons-wrapper {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    column-gap: 20px;
+}

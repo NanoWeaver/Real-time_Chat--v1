@@ -7,7 +7,8 @@ const Home = ({
                 setUserName,
                 setUserLogin,
                 setUserPassword,
-                socket
+                socket,
+                setUserAvatar
               }) => { 
   const navigate = useNavigate(); // Создаем функцию ,чтоб перенапровлять пользователя на другую страницу
   const userLoginRef = useRef(null) // Получаем поле с логином пользователя

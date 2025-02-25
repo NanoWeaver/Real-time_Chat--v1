@@ -14,7 +14,7 @@ const server = http.createServer(app); // Создаём HTTP сервер с п
 const io = new Server(server, {
     cors: {
       origin: 'http://localhost:3000',
-      methods: ['GET', 'POST'],
+      methods: ['GET', 'POST', 'OPTIONS'],
     },
 });
 
@@ -36,16 +36,17 @@ io.on('connection', (socket) => { // Обработка подключения �
 
     // Обработка отправки сообщения пользователем
     socket.on('send_message', async (data) => {
-        const { room, message, userName, userLogin, createdtime } = data;
+        const { room, message, userName, userLogin, createdtime, userAvatar } = data;
         console.log('Пользовател с именем ' + userName + ' отправил сообщение')
         io.to(room.roomLogin).emit('receive_message', { // Отправляем сообщение всем в комнате
             message,
             userName,
+            userAvatar,
             createdtime,
             userLogin
         });
         // Добавляем сообщение в бд
-        await addMessage(room.roomLogin, message, userName, userLogin, createdtime )
+        await addMessage(room.roomLogin, message, userName, userLogin, createdtime, userAvatar  )
         // Изминяем последнее собщение в комнате
         const lastMessage = await changingLastMessage(userName, room.roomLogin, message,  createdtime)
         // Отправляем событие обновления последнего сообщения

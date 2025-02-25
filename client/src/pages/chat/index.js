@@ -4,13 +4,13 @@ import SendMessage from './send-message.js'; // Импорт компонент�
 import NavigationMessage from './navigation-message.js'
 
 // Определяем компонент Chat
-const Chat = ({ userName, room, socket, userLogin, setRoom }) => { // Он принимает три пропса
+const Chat = ({ userName, room, socket, userLogin, setRoom, userAvatar}) => { // Он принимает три пропса
   return ( // Возвращаемый JSX:
     <div className='connectify'>
-        <NavigationMessage socket={socket} userLogin = {userLogin} setRoom = {setRoom} room={room}/>
+        <NavigationMessage socket={socket} userLogin={userLogin} setRoom={setRoom} room={room} userAvatar={userAvatar}/>
         <div className='connectify__chat-area'>
-          <MessagesArea socket={socket} userName={userName} room={room} userLogin = {userLogin}/>
-          <SendMessage socket={socket} userName={userName} room={room} userLogin = {userLogin}/>
+          <MessagesArea socket={socket} userName={userName} room={room} userLogin={userLogin} userAvatar={userAvatar}/>
+          <SendMessage socket={socket} userName={userName} room={room} userLogin={userLogin} userAvatar={userAvatar}/>
         </div>
     </div>
   );

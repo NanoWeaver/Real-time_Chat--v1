@@ -22,6 +22,7 @@ const MessagesArea = ({ socket, userName, userLogin, room }) => { // Опред�
   useEffect(() => {
     socket.on('loading_message_history', async (data) => {
       console.log('Загружаем историю чата из комнаты ' + data.roomName)
+      console.log('Логин пользователя в конмпоненте messages-area :' + userLogin)
       const massagesList = await getMessagesRoom(data.roomLogin);
       console.log('Массив объектов сообщений для этой комнаты:', massagesList)
       // Перебираем объекты сообщений для маркировки по типо От пользователя или Нет
@@ -52,6 +53,7 @@ const MessagesArea = ({ socket, userName, userLogin, room }) => { // Опред�
         {
           message: data.message,
           userName: data.userName,
+          userAvatar: data.userAvatar,
           createdtime: data.createdtime,
           isCurrentUser
         },
@@ -87,6 +89,7 @@ const MessagesArea = ({ socket, userName, userLogin, room }) => { // Опред�
         <div  key={msg.createdtime} ref={messagesEndRef} className={`message__box message__box--${msg.isCurrentUser ? 'you' : 'they'}`}>
           <div key={i} className={`message__wrapper message__wrapper--${msg.isCurrentUser ? 'you' : 'they'}`}>
           <div className='message__head'>
+            <img className='message__user-avatar' src={msg.userAvatar} width={45} height={45}/>
             <span className='message__user-name'>{msg.userName} </span> <span className='message__time'>{new Date(msg.createdtime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
           </div>
           <p className='message__text'>{msg.message}</p>

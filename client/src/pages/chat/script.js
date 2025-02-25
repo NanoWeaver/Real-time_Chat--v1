@@ -81,14 +81,15 @@ export async function getUserRooms(userLogin) {
 }
 
 // Функция добавления сообщения в базу данных
-export async function addMessage(roomLogin, message, userName, userLogin, createdtime) {
+export async function addMessage(roomLogin, message, userName, userLogin, createdtime,userAvatar) {
     try {
         const messageDoc = await addDoc(collection(db, "messages"), {
             roomLogin, 
             message, 
             userName, 
             userLogin, 
-            createdtime
+            createdtime,
+            userAvatar 
         });
         console.log("Сообщение сохранено с ID:",  messageDoc.id);
     } catch (e) {

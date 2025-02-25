@@ -387,6 +387,11 @@ html {
     justify-content: space-between;
 }
 
+.message__user-avatar {
+    display: block;
+    border-radius: 50%;
+}
+
 .message__user-name {
     color: var(--primary-text-color);
 }

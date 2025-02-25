@@ -1,9 +1,10 @@
 import './styles.css'; // Импорт стилей
+import {uploadImage, userAvatarChanging} from './script.js'
 import { useRef, useState } from 'react'; // Импорт реакт хуков
 import Cropper from 'react-cropper'; // Импорт библиотеки для обрезки фото пользователя
 import 'cropperjs/dist/cropper.css';
 
-const AvatarRegistration = () => {
+const AvatarRegistration = ({setUserAvatar, userLogin, userAvatar}) => {
   const [draggingActive, setDraggingActive] = useState(false); // Создаём состояние для флага начал ли пользователь тащить изображение
   const [selectedFile, setSelectedFile] = useState(null); // Состояние для хранения выбраного изображения
   const [croppedImage, setCroppedImage] = useState(null); // Состояние для хранения обрезанного изображения
@@ -41,14 +42,21 @@ const AvatarRegistration = () => {
         .getCroppedCanvas() // Создаёт HTML-элемент <canvas> с обрезанным изображением.
         .toBlob((blob) => { // Конвертирует содержимое <canvas> в объект Blob
           setCroppedImage(blob); // Сохраняет обрезанное изображение в состоянии React
-          // Здесь можно сразу вызвать загрузку на сервер
-          // uploadAvatar(blob);
+          console.log('Это бинарный файл изображения' , blob)
         });
     }
   };
 
-  const sendCroppedImage = () => {
+  // Функция сохранения изображения в фотохостинге и профиле пользователя
+  const sendCroppedImage = async () => {
     console.log('Изображение ушло на сервер')
+    console.log('Это бинарный файл изображения' , croppedImage)
+    const avatar = await uploadImage(croppedImage); // Сохраняем ссылку на аватарку пользователя
+    setUserAvatar(avatar);
+    console.log('Меняем аватарку для пользователя с логином :' + userLogin)
+    console.log('На аватарку с адресом URL :' + avatar)
+    await userAvatarChanging(userLogin, avatar)
+    console.log('Значение внутри  userAvatar:' + userAvatar)
   }
 
   // Отмена выбора
@@ -97,11 +105,19 @@ const AvatarRegistration = () => {
           />
         </div>
       ) : (
-        <img src={URL.createObjectURL(croppedImage)} alt="Обрезанное изображение"/>
+        <img className='avatar__preview' src={URL.createObjectURL(croppedImage)} alt="Обрезанное изображение"/>
       )
       )}
 
       <div className="buttons-wrapper">
+        <button 
+          className='home__button --primary-button' 
+          onClick={!croppedImage ? getCroppedImage : sendCroppedImage}
+          disabled={!selectedFile}
+        >
+          {croppedImage ? 'Загрузить' : 'Обрезать'}
+        </button>
+
         {selectedFile && (
           <button 
             className='home__button --secondary-button'
@@ -110,13 +126,6 @@ const AvatarRegistration = () => {
             Отмена
           </button>
         )}
-        <button 
-          className='home__button --primary-button' 
-          onClick={!croppedImage ? getCroppedImage : sendCroppedImage}
-          disabled={!selectedFile}
-        >
-          {croppedImage ? 'Загрузить' : 'Обрезать'}
-        </button>
       </div>
 
       <p className='home__subtitle'>

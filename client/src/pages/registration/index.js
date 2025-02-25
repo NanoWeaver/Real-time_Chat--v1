@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'; // Импортируем хук
 import { useRef, useState } from 'react';
 import { validationUserName, validationUserLogin, validationUserPassword } from '../../validation/index.js'; // Импортируем функции
 
-const Registr = ({socket}) => {
+const Registr = ({socket, setUserLogin, userLogin,setUserAvatar, userAvatar}) => {
     const navigate = useNavigate(); // Создаем функцию ,чтоб перенапровлять пользователя на другую страницу
 
     const [avatarSelectionWindow, setAvatarSelectionWindow] = useState(false);
@@ -22,6 +22,9 @@ const Registr = ({socket}) => {
             userLogin: userLoginRef.current.value, 
             userPassword: userPasswordRef.current.value,
           });
+          // Обновляем логин пользователя
+          console.log("Обновили логин пользователя при регистрации" + userLoginRef.current.value)
+          setUserLogin(userLoginRef.current.value)
           // После переводим пользователя на страницу Выбора аватарки
          setAvatarSelectionWindow(true)
         } else {
@@ -36,7 +39,7 @@ const Registr = ({socket}) => {
         <div className='home'>
           {
             avatarSelectionWindow ? (
-            <AvatarRegistration/>
+            <AvatarRegistration userLogin={userLogin} setUserAvatar={setUserAvatar} userAvatar={userAvatar}/>
             ) : (
             <div className='home__container'>
               <h1 className='home__heading'>Регистрация в Connectify</h1>
