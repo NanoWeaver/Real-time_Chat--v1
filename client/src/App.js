@@ -73,11 +73,13 @@ function App() { // Oпределение функционального ком�
                 setUserName = {setUserName}
                 userLogin = {userLogin}
                 userPassword = {userPassword}
+                setUserPassword = {setUserPassword}
                 room = {room} 
                 setRoom = {setRoom}
                 socket = {socket}
                 setUserAvatar = {setUserAvatar}
                 userAvatar = {userAvatar}
+                setUserLogin = {setUserLogin}
               />}
           />
           <Route

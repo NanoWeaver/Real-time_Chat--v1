@@ -1,11 +1,11 @@
 import { db } from '../../firebase.js';
-import {updateDoc, doc} from "firebase/firestore";
+import {updateDoc, doc, setDoc} from "firebase/firestore";
 import { supabase } from '../../supabase.js';
 import axios from 'axios';
-import { collection, getDocs, addDoc, query, where } from "firebase/firestore";
+import { collection, getDocs, getDoc, addDoc, query, where } from "firebase/firestore";
 
 
-// Функция поиска пользователя в базе данных
+// Функция поиска пользователя в базе данных по логину
 export async function userSearchDatabase(userLogin) {
         // Получаем нашу колекцию пользователей
         const usersCollection = await collection(db, "users");
@@ -25,6 +25,23 @@ export async function userSearchDatabase(userLogin) {
         }
 }
 
+// Функция поиска пользователя в базе данных по ID
+export async function userSearchDatabaseID(userID) {
+    const userRef = doc(db, 'users', userID);
+    try {
+        const userSnap = await getDoc(userRef)
+        if(userSnap.exists()) {
+            console.log('Пользователь найден ' ,userSnap.data());
+            return userSnap.data()
+        } else {
+            console.log('Пользователь не найден')
+        }
+    
+    } catch(error) {
+        console.log('Ошибка ' ,error)
+    }
+}
+
 // Функция проверки соответсвия пароля пользователя
 export async function verifyinUserPassword(userObject,userPassword) {
     if (userObject.userPassword === userPassword) {
@@ -39,13 +56,18 @@ export async function verifyinUserPassword(userObject,userPassword) {
 // Функция регистрации пользователя и добавления его в базу данных
 export async function registerUser(userName, userLogin, userPassword,userAvatar = 'https://ojxpknhoadkcobbkrspm.supabase.co/storage/v1/object/public/avatars//userIcon.webp') {
     try {
-        const userDoc = await addDoc(collection(db, "users"), {
+        const userDoc = await addDoc(collection(db, "users"), { // Создаём объект пользователя
             userName: userName,
             userLogin: userLogin,
             userPassword: userPassword,
             userAvatar: userAvatar,
-            userRooms : []
+            userAbout: '',
+            userRooms : [],
         });
+        const userRef = doc(db, 'users', userDoc.id); // Получаем ссылку на этот объект
+        await updateDoc(userRef, { // Добавляем пользователю его уникальный ID
+            userID : userDoc.id,
+        })
         console.log("Пользователь зарегистрирован с ID:",  userDoc.id);
     } catch (e) {
         console.error("Ошибка регистрации пользователя:", e);

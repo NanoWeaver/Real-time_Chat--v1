@@ -38,9 +38,6 @@ const SendMessage = ({ socket, userName, userLogin, room, userAvatar }) => {
       <button className='send-message__message-button' onClick={sendMessage}>
         Отправить сообщение
       </button>
-      <button className='send-message__message-button' onClick={sendLogin}>
-        Аватарка пользователя
-      </button>
     </div>
   );
 };
