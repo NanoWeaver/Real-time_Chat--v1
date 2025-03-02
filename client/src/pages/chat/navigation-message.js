@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'; // Импорт хуков 
 import { validationUserName, validationUserLogin} from '../../validation/index.js'; // Импортируем функции
 import {getUserRooms, roomSearchDatabase} from './script.js' // Импорт функции получения списка комнат пользователя
 
-const NavigationMessage = ({ socket, userLogin, setRoom, room, userAvatar ,SetUserSettingOn}) => { // Определение компонента Massages с одним промтом 
+const NavigationMessage = ({ socket, userLogin, setRoom, room, userAvatar ,SetUserSettingOn, userName, userID}) => { // Определение компонента Massages с одним промтом 
   const [creatingChat, setCreatingChat] = useState(false);
   const [addingChat, setAddChat] = useState(false);
   const [rooms, setRooms] = useState([]);
@@ -25,7 +25,7 @@ const NavigationMessage = ({ socket, userLogin, setRoom, room, userAvatar ,SetUs
   // Скрипт для открытия чата
   const handleRoomClick = (room) => {
     console.log(room)
-    socket.emit('join_room', {room}); // Отправляем событие на сервер
+    socket.emit('join_room', {room, userName, userLogin}); // Отправляем событие на сервер
     setRoom(room); // Обновляем состояние комнаты
     setActiveRoom(room); // Обновляем состояние активной комнаты
   }
@@ -58,13 +58,13 @@ const NavigationMessage = ({ socket, userLogin, setRoom, room, userAvatar ,SetUs
 
   // Обновление комнат пользователя
   const updateListRooms = async () => {
-    const userRoomsList = await getUserRooms(userLogin); // Получаем комнаты пользователя
+    const userRoomsList = await getUserRooms(userID); // Получаем комнаты пользователя
     const userRoomsObjectArr = []; // Создаём массив для переноса информации о комнатах
     console.log('userRoomsList = ' + userRoomsList)
-    // Проходим по всем логинам комнта из объекта пользователя и получаем объекты этих комнат
+    // Проходим по всем логинам комнт из объекта пользователя и получаем объекты этих комнат
     for (let i = 0; i < userRoomsList.length; i++) {
       let room = await roomSearchDatabase(userRoomsList[i]);
-      console.log('Объект комнаты' + room)
+      console.log('Объект комнаты ' + room)
       userRoomsObjectArr.push(room);
     }
     setRooms(userRoomsObjectArr); // Обновляем состояние предовая массив объектов комнат
@@ -94,7 +94,7 @@ const NavigationMessage = ({ socket, userLogin, setRoom, room, userAvatar ,SetUs
       socket.emit('creating_room', {
         roomName: roomNameRef.current.value,
         roomLogin: roomLoginRef.current.value,
-        userLogin : userLogin
+        userID : userID
       });
       console.log('Валидация комнаты прошла успешно, отправлен запрос на сервер, логин пользователя ' + userLogin)
       setCreatingChat(false);
@@ -121,7 +121,7 @@ const NavigationMessage = ({ socket, userLogin, setRoom, room, userAvatar ,SetUs
     if (validationUserLogin(roomLoginRef)) {
       socket.emit('add_room', {
         roomLogin: roomLoginRef.current.value,
-        userLogin : userLogin
+        userID : userID
       });
       console.log('Валидация комнаты прошла успешно, отправлен запрос на сервер, логин пользователя ' + userLogin)
       setAddChat(false);

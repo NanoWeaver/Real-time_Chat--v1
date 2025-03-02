@@ -3,8 +3,8 @@ const app = express(); // Создаём экземпляр приложения
 import http from 'http'; // Импортируем встроенный модуль Node для создания сервера
 import cors from 'cors'; // Импортируем библиотека для принятия запросов из других доменов
 import { Server } from 'socket.io'; // Импортируем класс с помощью деструктуризации объекта  
-import { userSearchDatabase, userSearchDatabaseID, verifyinUserPassword, registerUser } from '../client/src/pages/registration/script.js'; // Импортируем наши функции работы с бд 
-import { roomSearchDatabase, registerRoom, addingRoomUser, addingUserRoom, addMessage, changingLastMessage } from '../client/src/pages/chat/script.js'; // Импортируем наши функции работы с бд 
+import { userSearchDatabaseLogin, userSearchDatabaseID, verifyinUserPassword, registerUser, gettingUserDataId } from '../client/src/pages/registration/script.js'; // Импортируем наши функции работы с бд 
+import { roomSearchDatabase, registerRoom, addingRoomUser, addingUserRoom, addMessage, changingLastMessage, getMessagesRoom } from '../client/src/pages/chat/script.js'; // Импортируем наши функции работы с бд 
 app.use(cors()); // Добавляем промежуточное CORS ПО , для обработки запросов с других доменов
 
 const server = http.createServer(app); // Создаём HTTP сервер с помощью экземпляра Express
@@ -26,9 +26,38 @@ io.on('connection', (socket) => { // Обработка подключения �
     console.log(`User connected ${socket.id}`); // Выводим id пользователя в консоль
   
     // Обработка захода в комнату
-    socket.on('join_room', (data) => {
+    socket.on('join_room', async (data) => {
         const {room} = data; // Деструктуризируем объект
-        socket.emit('loading_message_history', room); // Отправляем событие для загрузки сообщений
+        // Получаем список объектов сообщений
+        const massagesList = await getMessagesRoom(room.roomLogin);
+        console.log('Список объектов сообщений из переменной massagesList ', massagesList)
+        let senderName = ''; // Переменная для хранения имени пользователя
+        let senderLogin = '';
+        // Обновляем значение имени пользователя
+        // Перебираем объекты сообщений для маркировки по типо От пользователя или Нет
+        let massagesListFinal = await Promise.all(
+            massagesList.map( async (msg) => {
+                console.log('Переделываем объект сообщения и определяес значение isCurrentUser');
+                console.log('Логин отправителя = ' + msg.userLogin + ' А логин текущего пользователя ' + data.userLogin);
+        
+                const userDoc = await userSearchDatabaseID(msg.userID);
+                senderName = userDoc.userName;
+                senderLogin = userDoc.userLogin;
+                msg.userLogin = senderLogin;
+                  
+                return {
+                  ...msg,
+                  // Устанавливаем имя отправителя по логике имя пользователя или имя другого 
+                  userName: senderName,
+                  // Маркеруем сообщение от пользователя или нет
+                  isCurrentUser: msg.userLogin === data.userLogin
+                }
+              })
+        ) 
+        // Переворачиваем массив (Потом поправлю)
+        massagesListFinal = massagesListFinal.reverse()
+        console.log('Значение финального массива сообщений ',massagesListFinal)
+        socket.emit('loading_message_history', massagesListFinal); // Отправляем событие для загрузки сообщений
         console.log('Подключаем пользователя к комнате ' + room.roomLogin)
         socket.join(room.roomLogin) // Подключаем пользователя к комнате
         console.log('Пользователь подключен к комнате ' + room.roomLogin)
@@ -36,8 +65,8 @@ io.on('connection', (socket) => { // Обработка подключения �
 
     // Обработка отправки сообщения пользователем
     socket.on('send_message', async (data) => {
-        const { room, message, userName, userLogin, createdtime, userAvatar } = data;
-        console.log('Пользовател с именем ' + userName + ' отправил сообщение')
+        const { room, message, userID, userName, createdtime, userAvatar, userLogin } = data;
+        console.log('Пользователь с ID ' + userID + ' отправил сообщение')
         io.to(room.roomLogin).emit('receive_message', { // Отправляем сообщение всем в комнате
             message,
             userName,
@@ -46,17 +75,20 @@ io.on('connection', (socket) => { // Обработка подключения �
             userLogin
         });
         // Добавляем сообщение в бд
-        await addMessage(room.roomLogin, message, userName, userLogin, createdtime, userAvatar  )
+        await addMessage(room.roomLogin, message, userID, createdtime, userAvatar  )
         // Изминяем последнее собщение в комнате
-        const lastMessage = await changingLastMessage(userName, room.roomLogin, message,  createdtime)
+        const lastMessage = await changingLastMessage(userID, room.roomLogin, message,  createdtime)
         // Отправляем событие обновления последнего сообщения
+        // Предворительно получив актаульное имя пользователя
+        const [userNameLastMessage, userLoginLastMessage] = await gettingUserDataId(userID);
+        lastMessage.userSenderName = userNameLastMessage; // Устанавливаем имя пользователя
         io.emit('last_message_updated', { roomLogin: room.roomLogin, lastMessage});
     });
 
     // Обработка запроса на регистрацию
     socket.on('send_registr', async (data) => {
         // Ищем пользователя в бд
-        const searchResult = await userSearchDatabase(data.userLogin)
+        const searchResult = await userSearchDatabaseLogin(data.userLogin)
         if (!searchResult) { // Если пользователь ещё не зарегистриован , то регистрируем
             await registerUser(data.userName, data.userLogin, data.userPassword);
         } else { // А если уже есть такой логин , то не дублируем
@@ -67,7 +99,7 @@ io.on('connection', (socket) => { // Обработка подключения �
     // Обработка запроса на вход в аккаунт
     socket.on('login_vertification', async (data) => {
         // Ищем пользователя в бд
-        const searchResult = await userSearchDatabase(data.userLogin);
+        const searchResult = await userSearchDatabaseLogin(data.userLogin);
         if (!searchResult) { // Проверяем ответ
             console.log('Пользователь не найден, проверьте логин'); // Если нет такого логина
         } else {
@@ -90,13 +122,13 @@ io.on('connection', (socket) => { // Обработка подключения �
         console.log('Получили результаты поиска комнаты')
         if (!searchResult) { // Если комнаты нет ,то создаём её и добавляем на сервер
             await registerRoom(data.roomName, data.roomLogin);
-            // Затем добавляем эту комнату в объект пользователя
-            console.log('Передаём логин пользователя:' + data.userLogin + 'И логин комнаты' + data.roomLogin)
-            await addingRoomUser(data.userLogin, data.roomLogin);
+            console.log('Передаём ID пользователя:' + data.userID + ' И логин комнаты ' + data.roomLogin)
+            // Добавляем комнату в объект пользователя
+            await addingRoomUser(data.userID, data.roomLogin);
             // Затем добавлем пользователя в объект комнаты
-            await addingUserRoom(data.userLogin, data.roomLogin)
+            await addingUserRoom(data.userID, data.roomLogin)
             // Отправляем событие обновления клиенту
-            io.emit('rooms_updated', { userLogin: data.userLogin });
+            io.emit('rooms_updated', {  });
         } else {
             console.log('Комната уже создана')
         }
@@ -110,12 +142,12 @@ io.on('connection', (socket) => { // Обработка подключения �
             console.log('Комнаты не существует')
         } else {
             // Добавляем эту комнату в объект пользователя
-            console.log('Передаём логин пользователя:' + data.userLogin + 'И логин комнаты' + data.roomLogin)
-            await addingRoomUser(data.userLogin, data.roomLogin);
+            console.log('Передаём ID пользователя: ' + data.userID + ' И логин комнаты ' + data.roomLogin)
+            await addingRoomUser(data.userID, data.roomLogin);
             // Затем добавлем пользователя в объект комнаты
-            await addingUserRoom(data.userLogin, data.roomLogin)
+            await addingUserRoom(data.userID, data.roomLogin)
             // Отправляем событие обновления клиенту
-            io.emit('rooms_updated', { userLogin: data.userLogin });
+            io.emit('rooms_updated', {  });
         }
     })
 });

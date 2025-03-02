@@ -21,20 +21,9 @@ const MessagesArea = ({ socket, userName, userLogin, room }) => { // Опред�
   // Загрузка истории чата 
   useEffect(() => {
     socket.on('loading_message_history', async (data) => {
-      console.log('Загружаем историю чата из комнаты ' + data.roomName)
       console.log('Логин пользователя в конмпоненте messages-area :' + userLogin)
-      const massagesList = await getMessagesRoom(data.roomLogin);
-      console.log('Массив объектов сообщений для этой комнаты:', massagesList)
-      // Перебираем объекты сообщений для маркировки по типо От пользователя или Нет
-      const massagesListFinal = massagesList.map(msg => {
-        console.log('Переделываем объект сообщения и определяес значение isCurrentUser')
-        console.log('Логин отправителя = ' + msg.userLogin + ' А логин текущего пользователя ' + userLogin)
-        return {
-          ...msg,
-          isCurrentUser: msg.userLogin === userLogin
-        }
-      })
-      setMessagesReceived(massagesListFinal.reverse())
+      console.log('А содержимое массива сообщений messagesReceived ', data);
+      setMessagesReceived(data || [])
     })
   })
 

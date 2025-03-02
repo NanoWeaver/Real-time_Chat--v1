@@ -14,6 +14,7 @@ function App() { // Oпределение функционального ком�
   const [userLogin, setUserLogin] = useState(''); // Cоздание состояния userLogin, которое будет хранить имя пользователя, setUserLogin — функция для его обновления
   const [userPassword, setUserPassword] = useState(''); // Cоздание состояния userPassword, которое будет хранить пароль пользователя, setUserPassword — функция для его обновления
   const [userAvatar, setUserAvatar] = useState(''); // Создание состояние userAvatar которое будет хранить сслку на аватар пользователя
+  const [userID, setUserID] = useState(''); // Создаём сосотояние userID для хранения ID пользователя
   const [isLoading, setIsLoading] = useState(true); // Индикация загружены ли все данные пользователя
 
    // Загружаем данные из localStorage при монтировании
@@ -22,13 +23,15 @@ function App() { // Oпределение функционального ком�
     const savedUserLogin = localStorage.getItem('userLogin');
     const savedUserPassword = localStorage.getItem('userPassword');
     const savedRoom = localStorage.getItem('room');
-    const savedAvatar = localStorage.getItem('userAvatar')
+    const savedAvatar = localStorage.getItem('userAvatar');
+    const savedUserID = localStorage.getItem('userID');
 
     if (savedUserName) setUserName(savedUserName);
     if (savedUserLogin) setUserLogin(savedUserLogin);
     if (savedUserPassword) setUserPassword(savedUserPassword);
     if (savedRoom) setRoom(savedRoom);
-    if (savedAvatar) setUserAvatar(savedAvatar)
+    if (savedAvatar) setUserAvatar(savedAvatar);
+    if (savedUserID) setUserID(savedUserID);
 
     setIsLoading(false);
   }, []);
@@ -39,8 +42,9 @@ function App() { // Oпределение функционального ком�
     localStorage.setItem('userLogin', userLogin);
     localStorage.setItem('userPassword', userPassword);
     localStorage.setItem('room', room);
-    localStorage.setItem('userAvatar', userAvatar)
-  }, [userName, userLogin, userPassword, room, userAvatar]);
+    localStorage.setItem('userAvatar', userAvatar);
+    localStorage.setItem('userID',userID)
+  }, [userName, userLogin, userPassword, room, userAvatar, userID]);
 
 
   if (isLoading) return <div>Загрузка...</div>; // Пока данные не загружены 
@@ -61,6 +65,7 @@ function App() { // Oпределение функционального ком�
                 setUserPassword = {setUserPassword}
                 socket = {socket}
                 setUserAvatar = {setUserAvatar}
+                setUserID = {setUserID}
               />
             }
           />
@@ -80,6 +85,7 @@ function App() { // Oпределение функционального ком�
                 setUserAvatar = {setUserAvatar}
                 userAvatar = {userAvatar}
                 setUserLogin = {setUserLogin}
+                userID = {userID}
               />}
           />
           <Route

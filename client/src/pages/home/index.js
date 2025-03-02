@@ -8,7 +8,8 @@ const Home = ({
                 setUserLogin,
                 setUserPassword,
                 socket,
-                setUserAvatar
+                setUserAvatar,
+                setUserID
               }) => { 
   const navigate = useNavigate(); // Создаем функцию ,чтоб перенапровлять пользователя на другую страницу
   const userLoginRef = useRef(null) // Получаем поле с логином пользователя
@@ -19,17 +20,11 @@ const Home = ({
     setUserName(data.userName);
     setUserLogin(data.userLogin);
     setUserPassword(data.userPassword);
+    setUserAvatar(data.userAvatar);
+    setUserID(data.userID);
     console.log('Логин пользователя при регистрации ' + data.userLogin)
     joinConnectify();
   })
-//   const joinRoom = () => { // Функция при клике на кнопку входа в комнату
-//     if (room !== '' && username !== '') { // Проверяем чтоб имя и название комнаты были заполнены
-//       socket.emit('join_room', { username, room }); // Отправляем событие join-room на сервер , предаем объект с именем и названием комнаты
-//     }
-
-// // После переводим пользователя на страницу чата и убираем возможность шагнуть назад с помощью стрелки браузера
-//     navigate('/chat', { replace: true });
-//   };
 
   const loginVerification = () => { // Функция при клике на кнопку входа в аккаунт
     socket.emit('login_vertification', { 

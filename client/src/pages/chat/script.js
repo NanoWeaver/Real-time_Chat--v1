@@ -1,13 +1,13 @@
 import { db } from '../../firebase.js';
 import { collection, getDocs, addDoc, query, where, updateDoc, doc, orderBy } from "firebase/firestore";
-import {userSearchDatabase} from '../registration/script.js'
+import {userSearchDatabaseLogin, userSearchDatabaseID} from '../registration/script.js'
 
 // Функция поиска комнаты в базе данных
 export async function roomSearchDatabase(roomLogin) {
     // Получаем нашу колекцию комнат
-    const roomsCollection = await collection(db, "rooms");
+    const roomsCollection = collection(db, "rooms");
     // Формируем запрос к бд , где будет искать соответствия roomLogin
-    const request = await query(roomsCollection, where("roomLogin", "==", roomLogin));
+    const request = query(roomsCollection, where("roomLogin", "==", roomLogin));
     // Получаем объект с результатами запроса
     const roomSnapshot = await getDocs(request);
     // Получаем массив с объектом комнаты
@@ -42,28 +42,28 @@ export async function registerRoom(roomName, roomLogin) {
 }
 
 // Фунция добавления новой комнаты в объект пользователя
-export async function addingRoomUser(userLogin, roomLogin) {
+export async function addingRoomUser(userID, roomLogin) {
     // Получаем пользователя
-    const userDoc = await userSearchDatabase(userLogin);
+    const userDoc = await userSearchDatabaseID(userID);
     console.log(userDoc)
     // Добавляем комнату в общий массив
     const userRoomsNew = userDoc.userRooms;
     userRoomsNew.push(roomLogin)
     // Получаем ссылку на документ пользователя
-    const userRef = doc(db, 'users', userDoc.id);
+    const userRef = doc(db, 'users', userID);
     await updateDoc(userRef, {
         userRooms : userRoomsNew
     })
 }
 
 // Фунция добавления нового пользователя в объект комнаты
-export async function addingUserRoom(userLogin, roomLogin) {
+export async function addingUserRoom(userID, roomLogin) {
     // Получаем комнату
     const roomDoc = await roomSearchDatabase(roomLogin);
     console.log(roomDoc)
     // Добавляем пользователя в общий массив
     const roomUsersNew = roomDoc.roomUsers;
-    roomUsersNew.push(userLogin)
+    roomUsersNew.push(userID)
     // Получаем ссылку на документ комнаты
     const roomRef = doc(db, 'rooms', roomDoc.id);
     await updateDoc(roomRef, {
@@ -72,24 +72,25 @@ export async function addingUserRoom(userLogin, roomLogin) {
 }
 
 // Функция получения списка комнат пользователя
-export async function getUserRooms(userLogin) {
+export async function getUserRooms(userID) {
     // Получаем пользователя
-    const userDoc = await userSearchDatabase(userLogin);
+    const userDoc = await userSearchDatabaseID(userID);
     // Получаем его список чатов
     const userRooms = userDoc.userRooms || [];
     return userRooms
 }
 
 // Функция добавления сообщения в базу данных
-export async function addMessage(roomLogin, message, userName, userLogin, createdtime,userAvatar) {
+export async function addMessage(roomLogin, message, userID, createdtime, userAvatar) {
     try {
         const messageDoc = await addDoc(collection(db, "messages"), {
+            userID,
+            userName: '',
+            userLogin: '',
             roomLogin, 
             message, 
-            userName, 
-            userLogin, 
             createdtime,
-            userAvatar 
+            userAvatar, 
         });
         console.log("Сообщение сохранено с ID:",  messageDoc.id);
     } catch (e) {
@@ -100,9 +101,9 @@ export async function addMessage(roomLogin, message, userName, userLogin, create
 // Функция загрузики истории собщений для определённой комнаты
 export async function getMessagesRoom(roomLogin, limit = 20) {
     // Получили колекцию сообщений
-    const collectionMessages = await collection(db, 'messages');
+    const collectionMessages = collection(db, 'messages');
     // Формируем запрос к бд
-    const request = await query(collectionMessages, where('roomLogin', '==', roomLogin),orderBy('createdtime', 'desc'));
+    const request = query(collectionMessages, where('roomLogin', '==', roomLogin),orderBy('createdtime', 'desc'));
     // Получаем результаты поиска
     const messageSnapshot = await getDocs(request)
 
@@ -110,15 +111,16 @@ export async function getMessagesRoom(roomLogin, limit = 20) {
 }
 
 // Функция изминения данных последнего сообщения в комнате
-export async function changingLastMessage(userName, roomLogin, message, createdtime) {
+export async function changingLastMessage(userID, roomLogin, message, createdtime) {
     // Получаем комнату
     console.log('Получаем комнату для обновления полседнего сообщения с именем ' + roomLogin + 'с текстом ' + message)
     const roomDoc = await roomSearchDatabase(roomLogin);
     // Создаём новый объект последнего сообщения
     const roomLastMessageNew = {
-        userSenderName: userName,
+        userSenderID: userID,
+        userSenderName: '',
         createdtime,
-        message
+        message,
     };
     // Получаем ссылку на документ комнаты
     const roomRef = doc(db, 'rooms', roomDoc.id);

@@ -6,7 +6,7 @@ import { collection, getDocs, getDoc, addDoc, query, where } from "firebase/fire
 
 
 // Функция поиска пользователя в базе данных по логину
-export async function userSearchDatabase(userLogin) {
+export async function userSearchDatabaseLogin(userLogin) {
         // Получаем нашу колекцию пользователей
         const usersCollection = await collection(db, "users");
         // Формируем запрос к бд , где будет искать соответствия userLogin
@@ -107,10 +107,16 @@ export async function uploadImage(fileBlob) {
 export async function userAvatarChanging(userLogin,avatarURL) {
     // Получаем пользователя
     console.log('Меняем аватарку для пользователя с логином :' + userLogin)
-    const userDoc = await userSearchDatabase(userLogin);
+    const userDoc = await userSearchDatabaseLogin(userLogin);
     // Получаем ссылку на документ пользователя
     const userRef = doc(db, 'users', userDoc.id);
     await updateDoc(userRef, {
         userAvatar : avatarURL
     })
+}
+
+// Функция получения имени и логина пользователя по ID
+export async function gettingUserDataId(userID) {
+    const userDoc = await userSearchDatabaseID(userID);
+    return [userDoc.userName, userDoc.userLogin];
 }

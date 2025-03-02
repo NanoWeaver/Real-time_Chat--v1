@@ -2,7 +2,7 @@ import './styles.css'; // Импорт стилей
 import React, { useState } from 'react'; //Импорт библиотеки и хука
 
 // Определяем компонент SendMessage с тремя пропсами
-const SendMessage = ({ socket, userName, userLogin, room, userAvatar }) => { 
+const SendMessage = ({ socket, userName, userLogin, room, userAvatar, userID }) => { 
   const [message, setMessage] = useState(''); // Создаём состояние для вводимого сообщения
   
   // Функция для отправки сообщения
@@ -11,16 +11,13 @@ const SendMessage = ({ socket, userName, userLogin, room, userAvatar }) => {
     if (message !== '') { // Проверяем не пустое ли оно
       const createdtime = Date.now(); // Сохраняем время отправки
       //Отпрявляем сообщение на сервер в виде объекта 
-      console.log('Отпрявляем сообщение на сервер в виде объекта ', { userName, room, message, userLogin, createdtime, userAvatar })
-      socket.emit('send_message', { userName, room, message, userLogin, createdtime, userAvatar });
+      console.log('Отпрявляем сообщение на сервер в виде объекта ', { room, message, createdtime, userAvatar, userID, userName, userLogin })
+      console.log('Значение объекта room ', room);
+      socket.emit('send_message', {room, message, createdtime, userAvatar, userID, userName, userLogin });
       setMessage(''); // Сбрасываем состояние на пустую строку
     }
     console.log('Отпраили сообщение от ' + 'Логин пользователя ' + userLogin + '. Имя пользователя ' + userName)
   };
-
-  const sendLogin = () => {
-    console.log('Аватарка пользователя в компоненте send-message : ' + userAvatar)
-  }
 
   return ( // Возврат JSX-разметки
     <div className='send-message'>
