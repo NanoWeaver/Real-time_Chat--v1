@@ -120,3 +120,23 @@ export async function gettingUserDataId(userID) {
     const userDoc = await userSearchDatabaseID(userID);
     return [userDoc.userName, userDoc.userLogin];
 }
+
+// Функция изминения имени пользователя 
+export async function userNameChanging(userID, userNewName) {
+    // Получаем ссылку на пользователя
+    const userRef = doc(db, 'users', userID);
+    // Меняем данные
+    await updateDoc(userRef, {
+        userName : userNewName,
+    })
+}
+
+// Функция изминения логина пользователя 
+export async function userLoginChanging(userID, userNewLogin) {
+    // Получаем ссылку на пользователя
+    const userRef = doc(db, 'users', userID);
+    // Меняем данные
+    await updateDoc(userRef, {
+        userLogin : userNewLogin,
+    })
+}

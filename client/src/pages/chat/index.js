@@ -19,7 +19,8 @@ const Chat = ({ userName, room, socket, userLogin, setRoom, userAvatar, setUserA
           </div>
           ) : (
             <UserSetting userName={userName} setUserName = {setUserName} userLogin = {userLogin} setUserLogin = {setUserLogin} 
-            userPassword = {userPassword} setUserPassword = {setUserPassword} userAvatar={userAvatar} setUserAvatar = {setUserAvatar} />
+            userPassword = {userPassword} setUserPassword = {setUserPassword} userAvatar={userAvatar} setUserAvatar = {setUserAvatar} 
+            SetUserSettingOn = {SetUserSettingOn} userID = {userID}/>
           )
         }
     </div>
