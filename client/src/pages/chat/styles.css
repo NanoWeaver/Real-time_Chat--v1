@@ -428,25 +428,90 @@ html {
 
 .user-setting__box {
     width: 70%;
-    background-color: aqua;
+    background-color: var(--secondary-background-color);
     display: flex;
-    flex-direction: column;
+    flex-direction: row-reverse;
+    justify-content: center;
     align-items: center;
-    row-gap: 10px;
+    column-gap: 50px;
     padding: 30px;
+}
+
+.user-setting__user-avatar-wrapper {
+    cursor: pointer;
+    position: relative;
 }
 
 .user-setting__user-avatar {
     border-radius: 50%;
+    display: block;
+}
+
+.user-setting__user-avatar-SVG-wrapper {
+    opacity: 0;
+    position: absolute;
+    left: 90px;
+    top: 180px;
+    width: 50px;
+    height: 50px;
+    transition: all 0.3s ease-in-out;
+}
+
+.user-setting__SVG {
+    stroke: var(--primary-background-color);
+    transition: stroke 0.1s ease-in-out;
+}
+
+.user-setting__user-avatar-wrapper:active .user-setting__SVG{
+    stroke: var(--secondary-text-color);
+}
+
+.user-setting__user-avatar-SVG--open-SVG {
+    opacity: 1;
+}
+
+.user-setting__info-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    row-gap: 5px;
 }
 
 .user-setting__input {
     min-width: 100px;
-    width: 40%;
     padding: 12px;
     border-radius: 6px;
     border: 1px solid var(--primary-border-color);
     font-size: 0.9rem;
     color: var(--primary-text-color);
     resize: none;
+}
+
+.user-setting__password-wrapper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 5px;
+}
+
+.user-setting__button-wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.user-setting__button {
+    cursor: pointer;
+    width: 49%;
+    border: 0;
+    border-radius: 5px;
+    color: var(--primary-text-color);
+    font-size: 1em;
+    padding: 6px;
+}
+
+.--save-setting {
+    background-color: var(--primary-button-color);
+}
+
+.--cancel-setting {
+    background-color: var(--highlight-color);
 }
