@@ -79,7 +79,7 @@ export async function uploadImage(fileBlob) {
   if (!fileBlob) return;
 
   const file = new File([fileBlob], 'avatar.jpg', {
-    type: "image/*", // MIME-тип (например, "image/jpeg")
+    type: "image/*", 
   });
 
   // Генерируем уникальное имя файла

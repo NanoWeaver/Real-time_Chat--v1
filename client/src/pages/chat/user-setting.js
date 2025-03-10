@@ -1,16 +1,18 @@
 import './styles.css'; // Импортируем стили
-import AvatarRegistration from '../registration/avatar-registration.js'
+import ChoosingAvatar from '../registration/choosing-avatar.js'
 import { useState, useEffect, useRef } from 'react'; // Импорт хуков React
 import {userLoginChanging, userNameChanging} from '../registration/script.js'
 import { validationUserName, validationUserLogin} from '../../validation/index.js'; // Импортируем функции
 import {getUserRooms, roomSearchDatabase} from './script.js' // Импорт функции получения списка комнат пользователя
 
-const UserSetting = ({ userName, setUserName, userLogin, setUserLogin, userPassword, setUserPassword, userAvatar, setUserAvatar, SetUserSettingOn, userID}) => { // Определение компонента Massages с одним промтом 
+const UserSetting = ({ userName, setUserName, userLogin, setUserLogin, userPassword, setUserPassword, userAvatar, setUserAvatar, SetUserSettingOn, userID, userAbout, setUsetAbout}) => { // Определение компонента Massages с одним промтом 
   const [userNameNew, setUserNameNew] = useState(userName);
   const [userLoginNew, setUserLoginNew] = useState(userLogin);
   const [openPasswordChangeWindow, setOpenPasswordChangeWindow] = useState(false)
   const [PhotoSVG, setPhotoSVG] = useState('');
   const [avatarChanging,setAvatarChanging] = useState(false)
+  const [buttonCancel,setButtonCancel] = useState(true)
+  const userAboutArea = useRef('')
 
   // Скрипт срабатывает при клике на кнопку Сохранить
   const saveData = async () => {
@@ -31,6 +33,9 @@ const UserSetting = ({ userName, setUserName, userLogin, setUserLogin, userPassw
         console.log('Логин пользователя был изменён на ' + userLoginNew.trim())
       }
     } else console.log('Ошибка смены логина пользователя')
+
+    // Изминения Обо мне пользователя
+    console.log(userAboutArea.input.value)
   }
 
   // Скрипт выхода из настроек пользователя
@@ -72,12 +77,18 @@ const UserSetting = ({ userName, setUserName, userLogin, setUserLogin, userPassw
   const openChangingAvatar = () => {
     setAvatarChanging(true)
   }
+
+  // Скрипт закрытия инструмента смены аватарки пользователя
+  const closeChangingAvatar = () => {
+    setAvatarChanging(false);
+    console.log(avatarChanging)
+  }
   return ( // Возвращаем JSX
     <div className='user-setting__box'>
         {
           !avatarChanging ? (
             <div className={`user-setting__user-avatar-wrapper`} onMouseEnter={openPhotoSVG} onMouseLeave={closePhotoSVG} onClick={openChangingAvatar}>
-              <img className={`user-setting__user-avatar`}  src={userAvatar} alt='Фото профиля пользователя' width={230}/>
+              <img className={`user-setting__user-avatar`}  src={userAvatar} alt='Фото профиля пользователя' width={260}/>
               <div className={`user-setting__user-avatar-SVG-wrapper ${PhotoSVG}`}>
                 <svg className='user-setting__SVG' width="50px" height="50px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M13 4H8.8C7.11984 4 6.27976 4 5.63803 4.32698C5.07354 4.6146 4.6146 5.07354 4.32698 5.63803C4 6.27976 4 7.11984 4 8.8V15.2C4 16.8802 4 17.7202 4.32698 18.362C4.6146 18.9265 5.07354 19.3854 5.63803 19.673C6.27976 20 7.11984 20 8.8 20H15.2C16.8802 20 17.7202 20 18.362 19.673C18.9265 19.3854 19.3854 18.9265 19.673 18.362C20 17.7202 20 16.8802 20 15.2V11"  stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -87,14 +98,21 @@ const UserSetting = ({ userName, setUserName, userLogin, setUserLogin, userPassw
               </div>
             </div>
           ) : (
-            <AvatarRegistration />
+            <div className={`user-setting__user-avatar-wrapper`}>
+              <ChoosingAvatar setUserAvatar = {setUserAvatar} userLogin = {userLogin} userAvatar = {userAvatar} setButtonCancel = {setButtonCancel}/>
+              {
+                buttonCancel ? (
+                  <button className='user-setting__user-avatar-cancel --cancel-setting' onClick={closeChangingAvatar}>Отмена</button>
+                ) : false
+              }
+            </div>
           )
         }
         
         <div className='user-setting__info-wrapper'>
           <input className='user-setting__input' type='text' value={userNameNew} onChange={handleInputChangeName}/>
           <input className='user-setting__input' type='text' value={userLoginNew} onChange={handleInputChangeLogin}/>
-          <textarea className='user-setting__input' rows={5} placeholder='Обо мне'></textarea>
+          <textarea className='user-setting__input' rows={5} placeholder='Обо мне' ref={userAboutArea}>{userAbout}</textarea>
           <input className='user-setting__input' type='text' placeholder='Сменить пароль' onFocus={openPasswordChange} onBlur={closePasswordChange}/>
           {
             openPasswordChangeWindow ? (

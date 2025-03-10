@@ -6,11 +6,11 @@ import NavigationMessage from './navigation-message.js'
 import UserSetting from './user-setting.js'
 
 // Определяем компонент Chat
-const Chat = ({ userName, room, socket, userLogin, setRoom, userAvatar, setUserAvatar, setUserName , setUserLogin, userPassword, setUserPassword, userID}) => { // Он принимает три пропса
+const Chat = ({ userName, room, socket, userLogin, setRoom, userAvatar, setUserAvatar, setUserName , setUserLogin, userPassword, setUserPassword, userID, userAbout, setUserAbout}) => { // Он принимает три пропса
   const [userSettingOn, SetUserSettingOn] = useState(false);
   return ( // Возвращаемый JSX:
     <div className='connectify'>
-        <NavigationMessage socket={socket} userLogin={userLogin} setRoom={setRoom} room={room} userAvatar={userAvatar} SetUserSettingOn={SetUserSettingOn} userID={userID} userName={userName}/>
+        <NavigationMessage socket={socket} userLogin={userLogin} setRoom={setRoom} room={room} userAvatar={userAvatar} SetUserSettingOn={SetUserSettingOn} userID={userID} userName={userName} userAbout = {userAbout} setUserAbout = {setUserAbout} />
         {
           !userSettingOn ? (
             <div className='connectify__chat-area'>
@@ -20,7 +20,7 @@ const Chat = ({ userName, room, socket, userLogin, setRoom, userAvatar, setUserA
           ) : (
             <UserSetting userName={userName} setUserName = {setUserName} userLogin = {userLogin} setUserLogin = {setUserLogin} 
             userPassword = {userPassword} setUserPassword = {setUserPassword} userAvatar={userAvatar} setUserAvatar = {setUserAvatar} 
-            SetUserSettingOn = {SetUserSettingOn} userID = {userID}/>
+            SetUserSettingOn = {SetUserSettingOn} userID = {userID} userAbout = {userAbout} setUserAbout = {setUserAbout} />
           )
         }
     </div>

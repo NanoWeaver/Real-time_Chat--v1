@@ -15,6 +15,7 @@ function App() { // Oпределение функционального ком�
   const [userPassword, setUserPassword] = useState(''); // Cоздание состояния userPassword, которое будет хранить пароль пользователя, setUserPassword — функция для его обновления
   const [userAvatar, setUserAvatar] = useState(''); // Создание состояние userAvatar которое будет хранить сслку на аватар пользователя
   const [userID, setUserID] = useState(''); // Создаём сосотояние userID для хранения ID пользователя
+  const [userAbout, setUserAbout] = useState('') // Создаём состояние для хранения информации Обо мне
   const [isLoading, setIsLoading] = useState(true); // Индикация загружены ли все данные пользователя
 
    // Загружаем данные из localStorage при монтировании
@@ -25,6 +26,7 @@ function App() { // Oпределение функционального ком�
     const savedRoom = localStorage.getItem('room');
     const savedAvatar = localStorage.getItem('userAvatar');
     const savedUserID = localStorage.getItem('userID');
+    const savedUserAbout = localStorage.getItem('userAbout');
 
     if (savedUserName) setUserName(savedUserName);
     if (savedUserLogin) setUserLogin(savedUserLogin);
@@ -32,6 +34,7 @@ function App() { // Oпределение функционального ком�
     if (savedRoom) setRoom(savedRoom);
     if (savedAvatar) setUserAvatar(savedAvatar);
     if (savedUserID) setUserID(savedUserID);
+    if (savedUserAbout) setUserAbout(savedUserAbout);
 
     setIsLoading(false);
   }, []);
@@ -44,7 +47,8 @@ function App() { // Oпределение функционального ком�
     localStorage.setItem('room', room);
     localStorage.setItem('userAvatar', userAvatar);
     localStorage.setItem('userID',userID)
-  }, [userName, userLogin, userPassword, room, userAvatar, userID]);
+    localStorage.setItem('userAbout',userAbout)
+  }, [userName, userLogin, userPassword, room, userAvatar, userID,userAbout]);
 
 
   if (isLoading) return <div>Загрузка...</div>; // Пока данные не загружены 
@@ -86,6 +90,8 @@ function App() { // Oпределение функционального ком�
                 userAvatar = {userAvatar}
                 setUserLogin = {setUserLogin}
                 userID = {userID}
+                userAbout = {userAbout}
+                setUserAbout = {setUserAbout}
               />}
           />
           <Route
