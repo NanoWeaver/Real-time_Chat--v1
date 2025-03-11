@@ -1,18 +1,21 @@
 import './styles.css'; // Импортируем стили
 import ChoosingAvatar from '../registration/choosing-avatar.js'
 import { useState, useEffect, useRef } from 'react'; // Импорт хуков React
-import {userLoginChanging, userNameChanging} from '../registration/script.js'
-import { validationUserName, validationUserLogin} from '../../validation/index.js'; // Импортируем функции
+import {userLoginChanging, userNameChanging, userAboutChanging, userPasswordChanging, userSearchDatabaseID, verifyinUserPassword} from '../registration/script.js'
+import { validationUserName, validationUserLogin, validationUserPassword} from '../../validation/index.js'; // Импортируем функции
 import {getUserRooms, roomSearchDatabase} from './script.js' // Импорт функции получения списка комнат пользователя
 
-const UserSetting = ({ userName, setUserName, userLogin, setUserLogin, userPassword, setUserPassword, userAvatar, setUserAvatar, SetUserSettingOn, userID, userAbout, setUsetAbout}) => { // Определение компонента Massages с одним промтом 
+const UserSetting = ({ userName, setUserName, userLogin, setUserLogin, userPassword, setUserPassword, userAvatar, setUserAvatar, SetUserSettingOn, userID, userAbout, setUserAbout}) => { // Определение компонента Massages с одним промтом 
   const [userNameNew, setUserNameNew] = useState(userName);
   const [userLoginNew, setUserLoginNew] = useState(userLogin);
   const [openPasswordChangeWindow, setOpenPasswordChangeWindow] = useState(false)
   const [PhotoSVG, setPhotoSVG] = useState('');
-  const [avatarChanging,setAvatarChanging] = useState(false)
-  const [buttonCancel,setButtonCancel] = useState(true)
-  const userAboutArea = useRef('')
+  const [avatarChanging,setAvatarChanging] = useState(false);
+  const [buttonCancel,setButtonCancel] = useState(true);
+  const userAboutArea = useRef('');
+  const newPaswword = useRef('');
+  const newPaswwordReplay = useRef('');
+  const oldPaswword = useRef('')
 
   // Скрипт срабатывает при клике на кнопку Сохранить
   const saveData = async () => {
@@ -35,7 +38,20 @@ const UserSetting = ({ userName, setUserName, userLogin, setUserLogin, userPassw
     } else console.log('Ошибка смены логина пользователя')
 
     // Изминения Обо мне пользователя
-    console.log(userAboutArea.input.value)
+    if (userAbout !== userAboutArea.current.value) {
+      userAboutChanging(userID, userAboutArea.current.value);
+      setUserAbout(userAboutArea.current.value)
+      console.log('Информация о пользователе была изменена на  ' + userAboutArea.current.value)
+    } else console.log('Ошибка смены Обо мне пользователя')
+    
+    // Изминения Паролья пользователя
+    if (newPaswword.current.value === newPaswwordReplay.current.value) {
+      if (userPassword === oldPaswword.current.value) {
+        userPasswordChanging(userID, newPaswword.current.value);
+        setUserPassword(newPaswword.current.value);
+        console.log('Пароль успешно был изменён на ' + newPaswword.current.value);
+      }
+    } else console.log('Ошибка смены паролья пользователя')
   }
 
   // Скрипт выхода из настроек пользователя
@@ -60,7 +76,9 @@ const UserSetting = ({ userName, setUserName, userLogin, setUserLogin, userPassw
 
   // Скрипт закрытия изминения пароля
   const closePasswordChange = () => {
-    setOpenPasswordChangeWindow(false)
+    if (newPaswword.current.value === '') {
+      setOpenPasswordChangeWindow(false)
+    }
   }
 
   // Скрипт добавляющий SVG иконку для обозначения возможности сменить фото
@@ -113,12 +131,12 @@ const UserSetting = ({ userName, setUserName, userLogin, setUserLogin, userPassw
           <input className='user-setting__input' type='text' value={userNameNew} onChange={handleInputChangeName}/>
           <input className='user-setting__input' type='text' value={userLoginNew} onChange={handleInputChangeLogin}/>
           <textarea className='user-setting__input' rows={5} placeholder='Обо мне' ref={userAboutArea}>{userAbout}</textarea>
-          <input className='user-setting__input' type='text' placeholder='Сменить пароль' onFocus={openPasswordChange} onBlur={closePasswordChange}/>
+          <input className='user-setting__input' type='text' placeholder='Сменить пароль' onFocus={openPasswordChange} onBlur={closePasswordChange} ref={newPaswword}/>
           {
             openPasswordChangeWindow ? (
               <div className='user-setting__password-wrapper'>
-                <input className='user-setting__input' type='text' placeholder='Повторите новый пароль' />
-                <input className='user-setting__input' type='text' placeholder='Напишите текущий' />
+                <input className='user-setting__input' type='text' placeholder='Повторите новый пароль' ref={newPaswwordReplay}/>
+                <input className='user-setting__input' type='text' placeholder='Напишите текущий' ref={oldPaswword}/>
               </div>
             ) : (
               false

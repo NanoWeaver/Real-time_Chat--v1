@@ -140,3 +140,23 @@ export async function userLoginChanging(userID, userNewLogin) {
         userLogin : userNewLogin,
     })
 }
+
+// Функция изминения Обо мне пользователя 
+export async function userAboutChanging(userID, userNewAbout) {
+    // Получаем ссылку на пользователя
+    const userRef = doc(db, 'users', userID);
+    // Меняем данные
+    await updateDoc(userRef, {
+        userAbout : userNewAbout,
+    })
+}
+
+// Функция изминения пароля пользователя 
+export async function userPasswordChanging(userID, userNewPassword) {
+    // Получаем ссылку на пользователя
+    const userRef = doc(db, 'users', userID);
+    // Меняем данные
+    await updateDoc(userRef, {
+        userPassword : userNewPassword,
+    })
+}
