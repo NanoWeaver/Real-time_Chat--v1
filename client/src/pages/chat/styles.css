@@ -532,3 +532,69 @@ img {
 .--cancel-setting {
     background-color: var(--highlight-color);
 }
+
+.creating-room__box {
+    width: 70%;
+    display: flex;
+    justify-content: center;
+    column-gap: 50px;
+    background-color: var(--secondary-background-color);
+    padding: 30px;
+}
+
+.creating-room__heading {
+    margin: 0;
+}
+
+.creating-room__avatar-wrapper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 22px;
+}
+
+.creating-room__info-box {
+    display: flex;
+    width: 50%;
+    flex-direction: column;
+    row-gap: 15px;
+}
+
+.creating-room__info-wrapper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+
+.creating-room__input {
+    min-width: 100px;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid var(--primary-border-color);
+    font-size: 0.9rem;
+    color: var(--primary-text-color);
+    resize: none;
+}
+
+.creating-room__button-wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.creating-room__button {
+    cursor: pointer;
+    width: 49%;
+    border: 0;
+    border-radius: 5px;
+    color: var(--primary-text-color);
+    font-weight: bold;
+    font-size: 1.1rem;
+    padding: 14px;
+}
+
+.--save-setting {
+    background-color: var(--primary-button-color);
+}
+
+.--cancel-setting {
+    background-color: var(--highlight-color);
+}

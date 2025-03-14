@@ -23,11 +23,15 @@ export async function roomSearchDatabase(roomLogin) {
 }
 
 // Функция регеистрации комнаты и добавления её в базу данных
-export async function registerRoom(roomName, roomLogin) {
+export async function registerRoom(room) {
     try {
+        console.log(room)
         const roomDoc = await addDoc(collection(db, "rooms"), {
-            roomName: roomName,
-            roomLogin: roomLogin,
+            roomName: room.roomName,
+            roomLogin: room.roomLogin,
+            roomAbout: room.roomAbout,
+            roomAdmin: [room.userID,],
+            roomAvatar: room.roomAvatar,
             roomUsers: [],
             lastMessage: {
                 userSenderName: '',

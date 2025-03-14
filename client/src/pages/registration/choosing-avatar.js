@@ -4,11 +4,12 @@ import { useRef, useState } from 'react'; // Импорт реакт хуков
 import Cropper from 'react-cropper'; // Импорт библиотеки для обрезки фото пользователя
 import 'cropperjs/dist/cropper.css';
 
-const ChoosingAvatar = ({setUserAvatar, userLogin, userAvatar , setButtonCancel = () => {}}) => {
+const ChoosingAvatar = ({setUserAvatar, userLogin, userAvatar , setButtonCancel = () => {}, setRoomAvatarURL = () => {}, itsRoom = false}) => {
   const [draggingActive, setDraggingActive] = useState(false); // Создаём состояние для флага начал ли пользователь тащить изображение
   const [selectedFile, setSelectedFile] = useState(null); // Состояние для хранения выбраного изображения
   const [croppedImage, setCroppedImage] = useState(null); // Состояние для хранения обрезанного изображения
   const cropperRef = useRef(null);
+
 
   // Обработчик выбора файла
   const handleFileSelect = (file) => {
@@ -50,14 +51,20 @@ const ChoosingAvatar = ({setUserAvatar, userLogin, userAvatar , setButtonCancel 
 
   // Функция сохранения изображения в фотохостинге и профиле пользователя
   const sendCroppedImage = async () => {
-    console.log('Изображение ушло на сервер')
-    console.log('Это бинарный файл изображения' , croppedImage)
-    const avatar = await uploadImage(croppedImage); // Сохраняем ссылку на аватарку пользователя
-    setUserAvatar(avatar);
-    console.log('Меняем аватарку для пользователя с логином :' + userLogin)
-    console.log('На аватарку с адресом URL :' + avatar)
-    await userAvatarChanging(userLogin, avatar)
-    console.log('Значение внутри  userAvatar:' + userAvatar)
+    if (itsRoom) {
+      console.log('Это блок для возврата URL ')
+      setRoomAvatarURL(await uploadImage(croppedImage));
+    } else {
+      console.log('Значение переменной itsRoom ' + itsRoom)
+      console.log('Изображение ушло на сервер')
+      console.log('Это бинарный файл изображения' , croppedImage)
+      const avatar = await uploadImage(croppedImage); // Сохраняем ссылку на аватарку пользователя
+      setUserAvatar(avatar);
+      console.log('Меняем аватарку для пользователя с логином :' + userLogin)
+      console.log('На аватарку с адресом URL :' + avatar)
+      await userAvatarChanging(userLogin, avatar)
+      console.log('Значение внутри  userAvatar:' + userAvatar)
+    }
   }
 
   // Отмена выбора

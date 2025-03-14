@@ -121,7 +121,7 @@ io.on('connection', (socket) => { // Обработка подключения �
         const searchResult = await roomSearchDatabase(data.roomLogin);
         console.log('Получили результаты поиска комнаты')
         if (!searchResult) { // Если комнаты нет ,то создаём её и добавляем на сервер
-            await registerRoom(data.roomName, data.roomLogin);
+            await registerRoom(data);
             console.log('Передаём ID пользователя:' + data.userID + ' И логин комнаты ' + data.roomLogin)
             // Добавляем комнату в объект пользователя
             await addingRoomUser(data.userID, data.roomLogin);
