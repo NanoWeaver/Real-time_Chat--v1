@@ -213,7 +213,7 @@ const NavigationMessage = ({ socket, userLogin, setRoom, room, userAvatar ,SetUs
                   {rooms.map((room) => (
                     <div key={room.roomLogin} className={`message-wrapper ${activeRoom.roomLogin === room.roomLogin ? 'message-wrapper--active' : ''}`} onClick = {() => handleRoomClick(room)}>
                       <div className='message-wrapper__logo-wrapper'>
-                        <img className='message-wrapper__logo'  alt='Иконка Чата' width={54} height={54}/>
+                        <img className='message-wrapper__logo' src={room.roomAvatar}  alt='Иконка Чата' width={54} height={54}/>
                       </div>
                       <div className='message-wrapper__text-wrapper'>
                         <div className='message-wrapper__head'>

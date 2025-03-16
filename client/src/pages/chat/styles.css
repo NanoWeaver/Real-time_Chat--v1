@@ -550,6 +550,7 @@ img {
     display: flex;
     flex-direction: column;
     row-gap: 22px;
+    width: 40%;
 }
 
 .creating-room__info-box {
