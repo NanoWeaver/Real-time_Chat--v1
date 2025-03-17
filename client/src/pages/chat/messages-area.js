@@ -1,11 +1,14 @@
 import './styles.css'; // Импортируем стили
 import { useState, useEffect, useRef } from 'react'; // Импорт хуков React
-import {getMessagesRoom} from '../chat/script.js'
+import {getMessagesRoom , removingRoomUser, removingUserRoom} from '../chat/script.js'
+import RoomOptions from './room-option.js';
 
-const MessagesArea = ({ socket, userName, userLogin, room }) => { // Определение компонента Massages с одним промтом 
+const MessagesArea = ({ socket, userName, userLogin, room, userID }) => { // Определение компонента Massages с одним промтом 
   const [messagesReceived, setMessagesReceived] = useState([]); // Определяем состояние для хранения сообщений
   const messagesEndRef = useRef(); // Будем получать ссылку на DOM последнего сообщения
   const [numberUsers,setNumberUsers] = useState(0);
+  const [menuVisible, setMenuVisible] = useState(false)
+  const messagesAreaOption = useRef();
 
   // Прокрутка чата до последнего сообщения 
   useEffect(() => {
@@ -57,15 +60,36 @@ const MessagesArea = ({ socket, userName, userLogin, room }) => { // Опред�
     };
   }, [socket]);
 
+  // Переключение видимости функций чата
+  const switchingMenuVisibility = () => {
+    if (menuVisible) {
+      setMenuVisible(false)
+    } else setMenuVisible(true)
+  }
+
+  // Скрипт выхода из чата
+  const handleLeaveChat = () => {
+    removingRoomUser(userID, room.roomLogin);
+    removingUserRoom(userID, room.roomLogin);
+  }
+
+  const handleToggleSound = () => {
+    
+  }
+
+  const handleSearchMessages = () => {
+    
+  }
+
   return ( // Возвращаем JSX
     <div className='messages-area'>
       <div className='messages-area__head'>
-        <img className='messages-area__logo' src='/images/userIcon.webp' alt='Иконка пользователя' width={42} height={42}/>
+        <img className='messages-area__logo' src={room.roomAvatar} alt='Иконка пользователя' width={42} height={42}/>
         <div className='messages-area__info-wrapper'>
           <h1 className='messages-area__heading'>{room.roomName}</h1>
           <span className='messages-area__number-users'>{numberUsers} участников</span>
         </div>
-        <button className='messages-area__option'>
+        <button className='messages-area__option' onClick={switchingMenuVisibility} ref={messagesAreaOption}>
           <svg className='messages-area__option-svg' width="5" height="20" viewBox="0 0 5 20" xmlns="http://www.w3.org/2000/svg">
             <circle cx="2.5" cy="17.5" r="2" />
             <circle cx="2.5" cy="10" r="2"/>
@@ -74,6 +98,7 @@ const MessagesArea = ({ socket, userName, userLogin, room }) => { // Опред�
         </button>
       </div>
       <div className='messages-area__content'>
+        <RoomOptions visible = {menuVisible} onLeaveChat = {handleLeaveChat} onToggleSound = {handleToggleSound} onSearchMessages = {handleSearchMessages} />
         {messagesReceived.map((msg, i) => (
         <div  key={msg.createdtime} ref={messagesEndRef} className={`message__box message__box--${msg.isCurrentUser ? 'you' : 'they'}`}>
           <div key={i} className={`message__wrapper message__wrapper--${msg.isCurrentUser ? 'you' : 'they'}`}>

@@ -75,6 +75,34 @@ export async function addingUserRoom(userID, roomLogin) {
     })
 }
 
+// Фунция удаления комнаты из объекта пользователя
+export async function removingRoomUser(userID, roomLogin) {
+    // Получаем пользователя
+    const userDoc = await userSearchDatabaseID(userID);
+    console.log(userDoc)
+    // Создаём новый массив без удалённой комнаты
+    const userRoomsNew = userDoc.userRooms.filter(room => room !== roomLogin);
+    // Получаем ссылку на документ пользователя
+    const userRef = doc(db, 'users', userID);
+    await updateDoc(userRef, {
+        userRooms : userRoomsNew
+    })
+}
+
+// Фунция удаления пользователя из объекта комнаты
+export async function removingUserRoom(userID, roomLogin) {
+    // Получаем комнату
+    const roomDoc = await roomSearchDatabase(roomLogin);
+    console.log(roomDoc)
+    // Создаём новый массив без пользователя
+    const roomUsersNew = roomDoc.roomUsers.filter(user => user !== userID);
+    // Получаем ссылку на документ комнаты
+    const roomRef = doc(db, 'rooms', roomDoc.id);
+    await updateDoc(roomRef, {
+        roomUsers : roomUsersNew
+    })
+}
+
 // Функция получения списка комнат пользователя
 export async function getUserRooms(userID) {
     // Получаем пользователя

@@ -18,8 +18,8 @@ const Chat = ({ userName, room, socket, userLogin, setRoom, userAvatar, setUserA
             <CreatingRoom setRoomCreatingOn = {setRoomCreatingOn} socket={socket} userID={userID} />
           ) : !userSettingOn ? (
               <div className='connectify__chat-area'>
-                <MessagesArea socket={socket} userName={userName} room={room} userLogin={userLogin} userAvatar={userAvatar}/>
-                <SendMessage socket={socket} userName={userName} room={room} userLogin={userLogin} userAvatar={userAvatar} userID={userID}/>
+                <MessagesArea socket={socket} userName={userName} room={room} userLogin={userLogin} userAvatar={userAvatar} userID={userID}/>
+                <SendMessage socket={socket} userName={userName} room={room} userLogin={userLogin} userAvatar={userAvatar} userID={userID} />
               </div>
             ) : (
               <UserSetting userName={userName} setUserName = {setUserName} userLogin = {userLogin} setUserLogin = {setUserLogin} 

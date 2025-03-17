@@ -599,3 +599,27 @@ img {
 .--cancel-setting {
     background-color: var(--highlight-color);
 }
+
+.room-options__box {
+    background-color: var(--primary-background-color);
+    width: fit-content;
+    padding: 10px;
+    border-radius: 7px;
+    position: absolute;
+    right: 48px;
+    z-index: 1;
+}
+
+.room-options__list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+}
+
+.room-options__button {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    font-size: 0.9em;
+}
