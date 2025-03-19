@@ -6,9 +6,12 @@ import RoomOptions from './room-option.js';
 const MessagesArea = ({ socket, userName, userLogin, room, userID }) => { // Определение компонента Massages с одним промтом 
   const [messagesReceived, setMessagesReceived] = useState([]); // Определяем состояние для хранения сообщений
   const messagesEndRef = useRef(); // Будем получать ссылку на DOM последнего сообщения
-  const [numberUsers,setNumberUsers] = useState(0);
-  const [menuVisible, setMenuVisible] = useState(false)
+  const [numberUsers,setNumberUsers] = useState(0); // Хранение колличества пользователей в комнате
+  const [menuVisible, setMenuVisible] = useState(false) // Состояние для открытия функций внутри чата
   const messagesAreaOption = useRef();
+  const [messageSearchField, setMessageSearchField] = useState(false) // Отображение инпута поиска сообщений
+  const [searchQuery, setSearchQuery] = useState('') // Хранение текста поискового запроса
+  const messageRefs = useRef(new Map()); // Map для хранения рефов сообщений
 
   // Прокрутка чата до последнего сообщения 
   useEffect(() => {
@@ -77,18 +80,39 @@ const MessagesArea = ({ socket, userName, userLogin, room, userID }) => { // О�
     
   }
 
+  // Скрипт отработки кнопки поиска в меню функций чата
   const handleSearchMessages = () => {
-    
+    setMessageSearchField(true);
+    setMenuVisible(false);
+    console.log(messageSearchField)
+  }
+
+  const searchInsideChat = () => {
+    socket.emit('chat_search', {messagesReceived,searchQuery});
   }
 
   return ( // Возвращаем JSX
     <div className='messages-area'>
       <div className='messages-area__head'>
         <img className='messages-area__logo' src={room.roomAvatar} alt='Иконка пользователя' width={42} height={42}/>
-        <div className='messages-area__info-wrapper'>
-          <h1 className='messages-area__heading'>{room.roomName}</h1>
-          <span className='messages-area__number-users'>{numberUsers} участников</span>
-        </div>
+        {
+          messageSearchField ? (
+            <div className='messages-area__search-wrapper'>
+              <input type='text' autoFocus className='navigation-message__search-input' onChange={e => setSearchQuery(e.target.value)}/>
+              <button className='navigation-message__search-button' key="search" onClick={searchInsideChat}>
+                <svg className='navigation-message__search-svg' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20px" height="20px">
+                  <circle stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" cx="8" cy="8" r="6"/>
+                  <line stroke-width="2" stroke-miterlimit="10" x1="11" y1="12" x2="18" y2="19"/>
+                </svg>
+              </button>
+            </div>
+          ) : (
+            <div className='messages-area__info-wrapper'>
+              <h1 className='messages-area__heading'>{room.roomName}</h1>
+              <span className='messages-area__number-users'>{numberUsers} участников</span>
+            </div>
+          )
+        }
         <button className='messages-area__option' onClick={switchingMenuVisibility} ref={messagesAreaOption}>
           <svg className='messages-area__option-svg' width="5" height="20" viewBox="0 0 5 20" xmlns="http://www.w3.org/2000/svg">
             <circle cx="2.5" cy="17.5" r="2" />

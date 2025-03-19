@@ -272,6 +272,12 @@ img {
     overflow: hidden;
 }
 
+.messages-area__search-wrapper {
+    display: flex;
+    flex-grow: 0.8;
+    column-gap: 10px;
+}
+
 .messages-area__info-wrapper {
     display: flex;
     flex-direction: column;
