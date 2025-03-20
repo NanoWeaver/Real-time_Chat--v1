@@ -163,3 +163,13 @@ export async function changingLastMessage(userID, roomLogin, message, createdtim
 
     return roomLastMessageNew;
 }
+
+// Функция поиска сообщений
+export function searchMessages(searchQuery, messagesReceived) {
+    const filtered = messagesReceived
+        .filter((msg) =>
+            msg.message.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+        .sort((a, b) => b.createdTime - a.createdTime);
+    return filtered;
+}

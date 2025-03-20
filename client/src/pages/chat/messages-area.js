@@ -12,6 +12,8 @@ const MessagesArea = ({ socket, userName, userLogin, room, userID }) => { // О�
   const [messageSearchField, setMessageSearchField] = useState(false) // Отображение инпута поиска сообщений
   const [searchQuery, setSearchQuery] = useState('') // Хранение текста поискового запроса
   const messageRefs = useRef(new Map()); // Map для хранения рефов сообщений
+  const [searchResults, setSearchResults] = useState([]); // Состояние для хранение результатов поиска по сообщениям
+  const [showNavigationArrows, setShowNavigationArrows] = useState(false) // Состояние отображения стрелок перехода по найденым сообщениям
 
   // Прокрутка чата до последнего сообщения 
   useEffect(() => {
@@ -37,6 +39,29 @@ const MessagesArea = ({ socket, userName, userLogin, room, userID }) => { // О�
   useEffect(() => {
     setMessagesReceived([]);
   },[room])
+
+  // Обработка завершения поиска с сервера
+  useEffect(() => {
+    const handleSearchResults = (data) => {
+      console.log('Содержимое data ' , data)
+      setSearchResults(data);
+      scrollToMessage(data[0].createdtime);
+      console.log('Центрируем на самом новом подходящем сообщении')
+    };
+
+    socket.on('chat_message_search_results', handleSearchResults);
+
+    return () => {
+      socket.off('chat_message_search_results', handleSearchResults);
+    };
+  }, []); 
+
+  // Обработка изминения массива с найдеными сообщениями
+  useEffect(() => {
+    if (searchResults.length > 1) {
+
+    }
+  },[searchResults])
 
   // Принятие сообщения с сервера и его отображение
   useEffect(() => {
@@ -87,9 +112,29 @@ const MessagesArea = ({ socket, userName, userLogin, room, userID }) => { // О�
     console.log(messageSearchField)
   }
 
+  // Скрипт отправки поиского запроса на сервер
   const searchInsideChat = () => {
+    if (!searchQuery) return;
     socket.emit('chat_search', {messagesReceived,searchQuery});
+    console.log('Запрос на поиск был отправлен на сервер');
   }
+
+  // Скрипт для назначения двух рефов на один элемент сообщения
+  const assignRefs = (el, createdTime) => {
+    if (!el) return;
+    messagesEndRef.current = el;
+    messageRefs.current.set(createdTime, el);
+  }
+
+  // Функция прыжков по найденым сообщениям
+  const scrollToMessage = (createdTime) => {
+    console.log('значене таймера createdTime ' + createdTime)
+    const foundMessage = messageRefs.current.get(createdTime);
+    if (foundMessage) {
+      foundMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      console.log('Переместились на сообщение с таймингом ' + createdTime)
+    }
+};
 
   return ( // Возвращаем JSX
     <div className='messages-area'>
@@ -124,7 +169,7 @@ const MessagesArea = ({ socket, userName, userLogin, room, userID }) => { // О�
       <div className='messages-area__content'>
         <RoomOptions visible = {menuVisible} onLeaveChat = {handleLeaveChat} onToggleSound = {handleToggleSound} onSearchMessages = {handleSearchMessages} />
         {messagesReceived.map((msg, i) => (
-        <div  key={msg.createdtime} ref={messagesEndRef} className={`message__box message__box--${msg.isCurrentUser ? 'you' : 'they'}`}>
+        <div  key={msg.createdtime} ref={(el) => assignRefs(el, msg.createdtime)} className={`message__box message__box--${msg.isCurrentUser ? 'you' : 'they'}`}>
           <div key={i} className={`message__wrapper message__wrapper--${msg.isCurrentUser ? 'you' : 'they'}`}>
           <div className='message__head'>
             <img className='message__user-avatar' src={msg.userAvatar} width={45} height={45}/>
