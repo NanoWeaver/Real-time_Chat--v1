@@ -2,6 +2,10 @@ html {
     height: 100vh;
 }
 
+img {
+    pointer-events: none
+}
+
 .connectify {
     display: flex;
     column-gap: 3%;
@@ -268,6 +272,18 @@ html {
     overflow: hidden;
 }
 
+.messages-area__search-wrapper {
+    display: flex;
+    flex-grow: 0.8;
+    column-gap: 10px;
+}
+
+.navigation-arrows__wrapper {
+    display: flex;
+    column-gap: 10px;
+    fill: var(--primary-text-color);
+}
+
 .messages-area__info-wrapper {
     display: flex;
     flex-direction: column;
@@ -428,25 +444,194 @@ html {
 
 .user-setting__box {
     width: 70%;
-    background-color: aqua;
+    background-color: var(--secondary-background-color);
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    row-gap: 10px;
+    column-gap: 50px;
     padding: 30px;
+}
+
+.user-setting__user-avatar-wrapper {
+    cursor: pointer;
+    position: relative;
+    width: 260px;
 }
 
 .user-setting__user-avatar {
     border-radius: 50%;
+    display: block;
+}
+
+.user-setting__user-avatar-SVG-wrapper {
+    opacity: 0;
+    position: absolute;
+    left: 105px;
+    top: 180px;
+    width: 50px;
+    height: 50px;
+    transition: all 0.3s ease-in-out;
+}
+
+.user-setting__SVG {
+    stroke: var(--primary-background-color);
+    transition: stroke 0.1s ease-in-out;
+}
+
+.user-setting__user-avatar-wrapper:active .user-setting__SVG{
+    stroke: var(--secondary-text-color);
+}
+
+.user-setting__user-avatar-SVG--open-SVG {
+    opacity: 1;
+}
+
+.user-setting__user-avatar-cancel {
+    padding: 14px 14px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    border: none;
+    width: 100%;
+    background: var(--primary-button-color);
+    color: var(--primary-text-color);
+    margin-top: 5px;
+}
+
+.user-setting__info-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    row-gap: 5px;
 }
 
 .user-setting__input {
     min-width: 100px;
-    width: 40%;
     padding: 12px;
     border-radius: 6px;
     border: 1px solid var(--primary-border-color);
     font-size: 0.9rem;
     color: var(--primary-text-color);
     resize: none;
+}
+
+.user-setting__password-wrapper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 5px;
+}
+
+.user-setting__button-wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.user-setting__button {
+    cursor: pointer;
+    width: 49%;
+    border: 0;
+    border-radius: 5px;
+    color: var(--primary-text-color);
+    font-size: 1em;
+    padding: 6px;
+}
+
+.--save-setting {
+    background-color: var(--primary-button-color);
+}
+
+.--cancel-setting {
+    background-color: var(--highlight-color);
+}
+
+.creating-room__box {
+    width: 70%;
+    display: flex;
+    justify-content: center;
+    column-gap: 50px;
+    background-color: var(--secondary-background-color);
+    padding: 30px;
+}
+
+.creating-room__heading {
+    margin: 0;
+}
+
+.creating-room__avatar-wrapper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 22px;
+    width: 40%;
+}
+
+.creating-room__info-box {
+    display: flex;
+    width: 50%;
+    flex-direction: column;
+    row-gap: 15px;
+}
+
+.creating-room__info-wrapper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+
+.creating-room__input {
+    min-width: 100px;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid var(--primary-border-color);
+    font-size: 0.9rem;
+    color: var(--primary-text-color);
+    resize: none;
+}
+
+.creating-room__button-wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.creating-room__button {
+    cursor: pointer;
+    width: 49%;
+    border: 0;
+    border-radius: 5px;
+    color: var(--primary-text-color);
+    font-weight: bold;
+    font-size: 1.1rem;
+    padding: 14px;
+}
+
+.--save-setting {
+    background-color: var(--primary-button-color);
+}
+
+.--cancel-setting {
+    background-color: var(--highlight-color);
+}
+
+.room-options__box {
+    background-color: var(--primary-background-color);
+    width: fit-content;
+    padding: 10px;
+    border-radius: 7px;
+    position: absolute;
+    right: 48px;
+    z-index: 1;
+}
+
+.room-options__list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+}
+
+.room-options__button {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    font-size: 0.9em;
 }

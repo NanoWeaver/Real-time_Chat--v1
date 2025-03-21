@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'; // Импорт хуков 
 import { validationUserName, validationUserLogin} from '../../validation/index.js'; // Импортируем функции
 import {getUserRooms, roomSearchDatabase} from './script.js' // Импорт функции получения списка комнат пользователя
 
-const NavigationMessage = ({ socket, userLogin, setRoom, room, userAvatar ,SetUserSettingOn, userName, userID}) => { // Определение компонента Massages с одним промтом 
+const NavigationMessage = ({ socket, userLogin, setRoom, room, userAvatar ,SetUserSettingOn, userName, userID, userAbout, setUsetAbout, setRoomCreatingOn}) => { // Определение компонента Massages с одним промтом 
   const [creatingChat, setCreatingChat] = useState(false);
   const [addingChat, setAddChat] = useState(false);
   const [rooms, setRooms] = useState([]);
@@ -88,6 +88,11 @@ const NavigationMessage = ({ socket, userLogin, setRoom, room, userAvatar ,SetUs
     console.log('Окно создания чата открыто')
   }
 
+   // Скрипт для открытия компонента создания чата
+   const showChatCreation = () => {
+    setRoomCreatingOn(true)
+  }
+
   // Скрипт для создания нового чата
   const createChat = () => {
     if (validationUserName(roomNameRef) && validationUserLogin(roomLoginRef)) {
@@ -152,7 +157,7 @@ const NavigationMessage = ({ socket, userLogin, setRoom, room, userAvatar ,SetUs
                   <line style={{strokeWidth:2,strokeLinecap:'round',strokeMiterlimit:10}} x1="28" y1="16" x2="2" y2="16"/>
                 </svg>
               </button>
-              <button className='navigation-message__button --create-chat' onClick={showChatCreationForm}>Создать чат</button>
+              <button className='navigation-message__button --create-chat' onClick={showChatCreation}>Создать чат</button>
               <button className='navigation-message__button --add-chat' onClick={showChatAddForm}>Добавить чат</button>
               <button className='navigation-message__setting' onClick={userSettingOn}>
                 <svg className='navigation-message__setting-svg' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="20px" height="20px">
@@ -208,7 +213,7 @@ const NavigationMessage = ({ socket, userLogin, setRoom, room, userAvatar ,SetUs
                   {rooms.map((room) => (
                     <div key={room.roomLogin} className={`message-wrapper ${activeRoom.roomLogin === room.roomLogin ? 'message-wrapper--active' : ''}`} onClick = {() => handleRoomClick(room)}>
                       <div className='message-wrapper__logo-wrapper'>
-                        <img className='message-wrapper__logo'  alt='Иконка Чата' width={54} height={54}/>
+                        <img className='message-wrapper__logo' src={room.roomAvatar}  alt='Иконка Чата' width={54} height={54}/>
                       </div>
                       <div className='message-wrapper__text-wrapper'>
                         <div className='message-wrapper__head'>

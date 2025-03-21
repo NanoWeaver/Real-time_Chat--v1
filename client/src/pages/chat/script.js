@@ -23,11 +23,15 @@ export async function roomSearchDatabase(roomLogin) {
 }
 
 // Функция регеистрации комнаты и добавления её в базу данных
-export async function registerRoom(roomName, roomLogin) {
+export async function registerRoom(room) {
     try {
+        console.log(room)
         const roomDoc = await addDoc(collection(db, "rooms"), {
-            roomName: roomName,
-            roomLogin: roomLogin,
+            roomName: room.roomName,
+            roomLogin: room.roomLogin,
+            roomAbout: room.roomAbout,
+            roomAdmin: [room.userID,],
+            roomAvatar: room.roomAvatar,
             roomUsers: [],
             lastMessage: {
                 userSenderName: '',
@@ -64,6 +68,34 @@ export async function addingUserRoom(userID, roomLogin) {
     // Добавляем пользователя в общий массив
     const roomUsersNew = roomDoc.roomUsers;
     roomUsersNew.push(userID)
+    // Получаем ссылку на документ комнаты
+    const roomRef = doc(db, 'rooms', roomDoc.id);
+    await updateDoc(roomRef, {
+        roomUsers : roomUsersNew
+    })
+}
+
+// Фунция удаления комнаты из объекта пользователя
+export async function removingRoomUser(userID, roomLogin) {
+    // Получаем пользователя
+    const userDoc = await userSearchDatabaseID(userID);
+    console.log(userDoc)
+    // Создаём новый массив без удалённой комнаты
+    const userRoomsNew = userDoc.userRooms.filter(room => room !== roomLogin);
+    // Получаем ссылку на документ пользователя
+    const userRef = doc(db, 'users', userID);
+    await updateDoc(userRef, {
+        userRooms : userRoomsNew
+    })
+}
+
+// Фунция удаления пользователя из объекта комнаты
+export async function removingUserRoom(userID, roomLogin) {
+    // Получаем комнату
+    const roomDoc = await roomSearchDatabase(roomLogin);
+    console.log(roomDoc)
+    // Создаём новый массив без пользователя
+    const roomUsersNew = roomDoc.roomUsers.filter(user => user !== userID);
     // Получаем ссылку на документ комнаты
     const roomRef = doc(db, 'rooms', roomDoc.id);
     await updateDoc(roomRef, {
@@ -130,4 +162,16 @@ export async function changingLastMessage(userID, roomLogin, message, createdtim
     })
 
     return roomLastMessageNew;
+}
+
+// Функция поиска сообщений
+export function searchMessages(searchQuery, messagesReceived) {
+    const filtered = messagesReceived
+        .filter((msg) =>
+            msg.message.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+    console.log('Не отсортированный массив ' , filtered)
+    const filteredSort = filtered.sort((a, b) => b.createdtime - a.createdtime);
+    console.log('Отсортированный массив ' , filteredSort)
+    return filteredSort;
 }

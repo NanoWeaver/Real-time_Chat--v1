@@ -18,8 +18,8 @@ const Registr = ({socket, setUserLogin, userLogin,setUserAvatar, userAvatar}) =>
           validationUserPassword(userPasswordRef)
         ) { // Создаём событие send_registr и отправляем на сервер
           socket.emit('send_registr', { 
-            userName: userNameRef.current.value, 
-            userLogin: userLoginRef.current.value, 
+            userName: userNameRef.current.value.trim(), 
+            userLogin: userLoginRef.current.value.trim(), 
             userPassword: userPasswordRef.current.value,
           });
           // Обновляем логин пользователя

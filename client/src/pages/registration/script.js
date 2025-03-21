@@ -79,7 +79,7 @@ export async function uploadImage(fileBlob) {
   if (!fileBlob) return;
 
   const file = new File([fileBlob], 'avatar.jpg', {
-    type: "image/*", // MIME-тип (например, "image/jpeg")
+    type: "image/*", 
   });
 
   // Генерируем уникальное имя файла
@@ -119,4 +119,44 @@ export async function userAvatarChanging(userLogin,avatarURL) {
 export async function gettingUserDataId(userID) {
     const userDoc = await userSearchDatabaseID(userID);
     return [userDoc.userName, userDoc.userLogin];
+}
+
+// Функция изминения имени пользователя 
+export async function userNameChanging(userID, userNewName) {
+    // Получаем ссылку на пользователя
+    const userRef = doc(db, 'users', userID);
+    // Меняем данные
+    await updateDoc(userRef, {
+        userName : userNewName,
+    })
+}
+
+// Функция изминения логина пользователя 
+export async function userLoginChanging(userID, userNewLogin) {
+    // Получаем ссылку на пользователя
+    const userRef = doc(db, 'users', userID);
+    // Меняем данные
+    await updateDoc(userRef, {
+        userLogin : userNewLogin,
+    })
+}
+
+// Функция изминения Обо мне пользователя 
+export async function userAboutChanging(userID, userNewAbout) {
+    // Получаем ссылку на пользователя
+    const userRef = doc(db, 'users', userID);
+    // Меняем данные
+    await updateDoc(userRef, {
+        userAbout : userNewAbout,
+    })
+}
+
+// Функция изминения пароля пользователя 
+export async function userPasswordChanging(userID, userNewPassword) {
+    // Получаем ссылку на пользователя
+    const userRef = doc(db, 'users', userID);
+    // Меняем данные
+    await updateDoc(userRef, {
+        userPassword : userNewPassword,
+    })
 }
