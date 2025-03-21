@@ -4,7 +4,7 @@ import http from 'http'; // Импортируем встроенный моду
 import cors from 'cors'; // Импортируем библиотека для принятия запросов из других доменов
 import { Server } from 'socket.io'; // Импортируем класс с помощью деструктуризации объекта  
 import { userSearchDatabaseLogin, userSearchDatabaseID, verifyinUserPassword, registerUser, gettingUserDataId } from '../client/src/pages/registration/script.js'; // Импортируем наши функции работы с бд 
-import { roomSearchDatabase, registerRoom, addingRoomUser, addingUserRoom, addMessage, changingLastMessage, getMessagesRoom, searchMessages } from '../client/src/pages/chat/script.js'; // Импортируем наши функции работы с бд 
+import { roomSearchDatabase, registerRoom, addingRoomUser, addingUserRoom, addMessage, changingLastMessage, getMessagesRoom, searchMessages, removingRoomUser, removingUserRoom } from '../client/src/pages/chat/script.js'; // Импортируем наши функции работы с бд 
 app.use(cors()); // Добавляем промежуточное CORS ПО , для обработки запросов с других доменов
 
 const server = http.createServer(app); // Создаём HTTP сервер с помощью экземпляра Express
@@ -150,6 +150,14 @@ io.on('connection', (socket) => { // Обработка подключения �
             io.emit('rooms_updated', {  });
         }
     })
+
+    // Обработка события выхода из комнаты
+    socket.on('leave_chat', async (data) => {
+       await removingRoomUser(data.userID, data.roomLogin);
+       await removingUserRoom(data.userID, data.roomLogin);
+        io.emit('rooms_updated', {  });
+    })
+    
 
     //Обработка поиска сообщения по ключевому запросу пользователя
     socket.on('chat_search', (data) => {

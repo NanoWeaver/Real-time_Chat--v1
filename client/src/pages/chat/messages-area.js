@@ -1,6 +1,6 @@
 import './styles.css'; // Импортируем стили
 import { useState, useEffect, useRef } from 'react'; // Импорт хуков React
-import {getMessagesRoom , removingRoomUser, removingUserRoom} from '../chat/script.js'
+import {getMessagesRoom} from '../chat/script.js'
 import RoomOptions from './room-option.js';
 
 const MessagesArea = ({ socket, userName, userLogin, room, userID }) => { // Определение компонента Massages с одним промтом 
@@ -14,6 +14,7 @@ const MessagesArea = ({ socket, userName, userLogin, room, userID }) => { // О�
   const messageRefs = useRef(new Map()); // Map для хранения рефов сообщений
   const [searchResults, setSearchResults] = useState([]); // Состояние для хранение результатов поиска по сообщениям
   const [showNavigationArrows, setShowNavigationArrows] = useState(false) // Состояние отображения стрелок перехода по найденым сообщениям
+  const [indexSelectedMessageSearch, setIndexSelectedMessageSearch] = useState(0) // Состояние для хранения на каком мы сейчас собщении , для отработки логики прижков
 
   // Прокрутка чата до последнего сообщения 
   useEffect(() => {
@@ -46,6 +47,7 @@ const MessagesArea = ({ socket, userName, userLogin, room, userID }) => { // О�
       console.log('Содержимое data ' , data)
       setSearchResults(data);
       scrollToMessage(data[0].createdtime);
+      setIndexSelectedMessageSearch(0);
       console.log('Центрируем на самом новом подходящем сообщении')
     };
 
@@ -56,10 +58,10 @@ const MessagesArea = ({ socket, userName, userLogin, room, userID }) => { // О�
     };
   }, []); 
 
-  // Обработка изминения массива с найдеными сообщениями
+  // Обработка отображения стрелок вверх\вниз
   useEffect(() => {
     if (searchResults.length > 1) {
-
+      setShowNavigationArrows(true)
     }
   },[searchResults])
 
@@ -97,8 +99,8 @@ const MessagesArea = ({ socket, userName, userLogin, room, userID }) => { // О�
 
   // Скрипт выхода из чата
   const handleLeaveChat = () => {
-    removingRoomUser(userID, room.roomLogin);
-    removingUserRoom(userID, room.roomLogin);
+    socket.emit('leave_chat', {userID, roomLogin : room.roomLogin});
+    setMenuVisible(false)
   }
 
   const handleToggleSound = () => {
@@ -134,7 +136,29 @@ const MessagesArea = ({ socket, userName, userLogin, room, userID }) => { // О�
       foundMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
       console.log('Переместились на сообщение с таймингом ' + createdTime)
     }
-};
+  };
+
+  // Функция прыжка к более старому сообщению
+  const jumpOldMessage = () => {
+    if (indexSelectedMessageSearch !== searchResults.length - 1) {
+      setIndexSelectedMessageSearch((prevIndex) => {
+        const newIndex = ++prevIndex;
+        scrollToMessage(newIndex);
+        return newIndex;
+      })
+    };
+  };
+
+  // Функция прыжка к более новому сообщению
+  const jumpNewMessage = () => {
+    if (indexSelectedMessageSearch !== 0) {
+      setIndexSelectedMessageSearch((prevIndex) => {
+        const newIndex = --prevIndex;
+        scrollToMessage(newIndex);
+        return newIndex;
+      })
+    };
+  };
 
   return ( // Возвращаем JSX
     <div className='messages-area'>
@@ -144,6 +168,22 @@ const MessagesArea = ({ socket, userName, userLogin, room, userID }) => { // О�
           messageSearchField ? (
             <div className='messages-area__search-wrapper'>
               <input type='text' autoFocus className='navigation-message__search-input' onChange={e => setSearchQuery(e.target.value)}/>
+              {
+                showNavigationArrows ? (
+                  <div className='navigation-arrows__wrapper'>
+                    <button onClick={jumpOldMessage} className='navigation-message__search-button' key="search">
+                    <svg style={{rotate: '-90deg'}} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                      <path  fill-rule="evenodd" d="m7.25 17l7.5-5l-7.5-5a.901.901 0 1 1 1-1.5l8.502 5.668a1 1 0 0 1 0 1.664L8.25 18.5a.901.901 0 1 1-1-1.5"/>
+                    </svg>
+                    </button>
+                    <button onClick={jumpNewMessage} className='navigation-message__search-button' key="search">
+                      <svg style={{rotate: '90deg'}} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path  fill-rule="evenodd" d="m7.25 17l7.5-5l-7.5-5a.901.901 0 1 1 1-1.5l8.502 5.668a1 1 0 0 1 0 1.664L8.25 18.5a.901.901 0 1 1-1-1.5"/>
+                      </svg>
+                    </button>
+                  </div>
+                ) : false
+              }
               <button className='navigation-message__search-button' key="search" onClick={searchInsideChat}>
                 <svg className='navigation-message__search-svg' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20px" height="20px">
                   <circle stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" cx="8" cy="8" r="6"/>

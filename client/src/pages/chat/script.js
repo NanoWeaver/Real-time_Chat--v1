@@ -170,6 +170,8 @@ export function searchMessages(searchQuery, messagesReceived) {
         .filter((msg) =>
             msg.message.toLowerCase().includes(searchQuery.toLowerCase())
         )
-        .sort((a, b) => b.createdTime - a.createdTime);
-    return filtered;
+    console.log('Не отсортированный массив ' , filtered)
+    const filteredSort = filtered.sort((a, b) => b.createdtime - a.createdtime);
+    console.log('Отсортированный массив ' , filteredSort)
+    return filteredSort;
 }

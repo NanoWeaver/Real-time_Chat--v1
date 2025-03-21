@@ -278,6 +278,12 @@ img {
     column-gap: 10px;
 }
 
+.navigation-arrows__wrapper {
+    display: flex;
+    column-gap: 10px;
+    fill: var(--primary-text-color);
+}
+
 .messages-area__info-wrapper {
     display: flex;
     flex-direction: column;
