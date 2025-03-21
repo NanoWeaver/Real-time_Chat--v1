@@ -13,8 +13,22 @@ img {
     padding: 3%;
 }
 
+.connectify__chat-area-box {
+    width: 75%;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    column-gap: 3%;
+}
+
+.room-info {
+    width: 40%;
+    height: 100%;
+    background-color: beige;
+}
+
 .connectify__chat-area {
-    width: 70%;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     row-gap: 3%;
@@ -25,7 +39,7 @@ img {
     display: flex;
     flex-direction: column;
     height: 100%;
-    width: 30%;
+    width: 25%;
     background-color: var(--primary-background-color);
     border-radius: 5px;
 }
@@ -291,6 +305,7 @@ img {
 }
 
 .messages-area__head {
+    cursor: pointer;
     flex-shrink: 0;
     display: flex;
     justify-content: space-between;
@@ -635,3 +650,4 @@ img {
     border: none;
     font-size: 0.9em;
 }
+

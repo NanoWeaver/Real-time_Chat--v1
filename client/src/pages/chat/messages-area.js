@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'; // Импорт хуков 
 import {getMessagesRoom} from '../chat/script.js'
 import RoomOptions from './room-option.js';
 
-const MessagesArea = ({ socket, userName, userLogin, room, userID }) => { // Определение компонента Massages с одним промтом 
+const MessagesArea = ({ socket, userName, userLogin, room, userID, setWindowRoomInfo }) => { // Определение компонента Massages с одним промтом 
   const [messagesReceived, setMessagesReceived] = useState([]); // Определяем состояние для хранения сообщений
   const messagesEndRef = useRef(); // Будем получать ссылку на DOM последнего сообщения
   const [numberUsers,setNumberUsers] = useState(0); // Хранение колличества пользователей в комнате
@@ -160,9 +160,15 @@ const MessagesArea = ({ socket, userName, userLogin, room, userID }) => { // О�
     };
   };
 
+  // Скрипт открытия информации о чате
+  const openRoomInfo = () => {
+    setWindowRoomInfo(true);
+    console.log('Объект комнаты ' ,room)
+  }
+
   return ( // Возвращаем JSX
     <div className='messages-area'>
-      <div className='messages-area__head'>
+      <div className='messages-area__head' onClick={openRoomInfo}>
         <img className='messages-area__logo' src={room.roomAvatar} alt='Иконка пользователя' width={42} height={42}/>
         {
           messageSearchField ? (
