@@ -204,7 +204,10 @@ const MessagesArea = ({ socket, userName, userLogin, room, userID, setWindowRoom
             </div>
           )
         }
-        <button className='messages-area__option' onClick={switchingMenuVisibility} ref={messagesAreaOption}>
+        <button className='messages-area__option' onClick={(e) => { 
+          e.stopPropagation();
+          switchingMenuVisibility();
+          }} ref={messagesAreaOption}>
           <svg className='messages-area__option-svg' width="5" height="20" viewBox="0 0 5 20" xmlns="http://www.w3.org/2000/svg">
             <circle cx="2.5" cy="17.5" r="2" />
             <circle cx="2.5" cy="10" r="2"/>

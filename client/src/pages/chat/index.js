@@ -22,7 +22,7 @@ const Chat = ({ userName, room, socket, userLogin, setRoom, userAvatar, setUserA
               <div className='connectify__chat-area-box'>
                 {
                   windowRoomInfo ? (
-                    <RoomInfo socket={socket} room={room}/>
+                    <RoomInfo socket={socket} room={room} setWindowRoomInfo = {setWindowRoomInfo} userID = {userID} />
                   ) : null
                 }
                 <div className='connectify__chat-area'>
