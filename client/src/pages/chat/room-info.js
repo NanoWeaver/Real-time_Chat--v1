@@ -60,7 +60,7 @@ const RoomInfo = ({ socket, room, setWindowRoomInfo, userID }) => { // Опре�
     <>
     {
         changeRoomWindow ? (
-            < ChangeRoom />
+            < ChangeRoom socket={socket} room={room} setChangeRoomWindow={setChangeRoomWindow} />
         ) : (
             <div className='room-info'>
         <div className='room-info__head'>

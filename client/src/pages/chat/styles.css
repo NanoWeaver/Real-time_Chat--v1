@@ -159,6 +159,62 @@ img {
     background-color: red;
 }
 
+.change-room {
+    width: 40%;
+    height: 100%;
+    padding: 20px 10px;
+    background-color: rgb(186, 255, 196);
+    display: flex;
+    flex-direction: column;
+    row-gap: 40px;
+}
+
+.change-room__head {
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+}
+
+.change-room__back {
+    background-color: transparent;
+    border: 0;
+    border-radius: 5px;
+    display: flex;
+    padding: 5px;
+}
+
+.change-room__back-svg {
+    fill: var(--primary-text-color);
+}
+
+.change-room__heading {
+    margin: 0;
+}
+
+.change-room__room-avatar-wrapper {
+    display: flex;
+}
+
+.change-room__room-avatar {
+    width: 100%;
+}
+
+.change-room__info-wraper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 5px;
+}
+
+.change-room__info-input {
+    min-width: 100px;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid var(--primary-border-color);
+    font-size: 0.9rem;
+    color: var(--primary-text-color);
+    resize: none
+}
+
 .connectify__chat-area {
     flex-grow: 1;
     display: flex;
