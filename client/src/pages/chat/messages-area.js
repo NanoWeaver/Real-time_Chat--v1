@@ -99,7 +99,7 @@ const MessagesArea = ({ socket, userName, userLogin, room, userID, setWindowRoom
 
   // Скрипт выхода из чата
   const handleLeaveChat = () => {
-    socket.emit('leave_chat', {userID, roomLogin : room.roomLogin});
+    socket.emit('leave_chat', {userID, roomID : room.roomID});
     setMenuVisible(false)
   }
 

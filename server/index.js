@@ -4,7 +4,7 @@ import http from 'http'; // Импортируем встроенный моду
 import cors from 'cors'; // Импортируем библиотека для принятия запросов из других доменов
 import { Server } from 'socket.io'; // Импортируем класс с помощью деструктуризации объекта  
 import { userSearchDatabaseLogin, userSearchDatabaseID, verifyinUserPassword, registerUser, gettingUserDataId } from '../client/src/pages/registration/script.js'; // Импортируем наши функции работы с бд 
-import { roomSearchDatabase, registerRoom, addingRoomUser, addingUserRoom, addMessage, changingLastMessage, getMessagesRoom, searchMessages, removingRoomUser, removingUserRoom } from '../client/src/pages/chat/script.js'; // Импортируем наши функции работы с бд 
+import { roomSearchDatabase, registerRoom, addingRoomUser, addingUserRoom, addMessage, changingLastMessage, getMessagesRoom, searchMessages, removingRoomUser, removingUserRoom, changingRoomAvatar, changingRoomName, changingRoomLogin, changingRoomAbout } from '../client/src/pages/chat/script.js'; // Импортируем наши функции работы с бд 
 app.use(cors()); // Добавляем промежуточное CORS ПО , для обработки запросов с других доменов
 
 const server = http.createServer(app); // Создаём HTTP сервер с помощью экземпляра Express
@@ -29,7 +29,7 @@ io.on('connection', (socket) => { // Обработка подключения �
     socket.on('join_room', async (data) => {
         const {room} = data; // Деструктуризируем объект
         // Получаем список объектов сообщений
-        const massagesList = await getMessagesRoom(room.roomLogin);
+        const massagesList = await getMessagesRoom(room.roomID);
         console.log('Список объектов сообщений из переменной massagesList ', massagesList)
         let senderName = ''; // Переменная для хранения имени пользователя
         let senderLogin = '';
@@ -75,9 +75,9 @@ io.on('connection', (socket) => { // Обработка подключения �
             userLogin
         });
         // Добавляем сообщение в бд
-        await addMessage(room.roomLogin, message, userID, createdtime, userAvatar  )
+        await addMessage(room.roomID, room.roomLogin, message, userID, createdtime, userAvatar  )
         // Изминяем последнее собщение в комнате
-        const lastMessage = await changingLastMessage(userID, room.roomLogin, message,  createdtime)
+        const lastMessage = await changingLastMessage(userID, room.roomID, message,  createdtime, room.roomLogin)
         // Отправляем событие обновления последнего сообщения
         // Предворительно получив актаульное имя пользователя
         const [userNameLastMessage, userLoginLastMessage] = await gettingUserDataId(userID);
@@ -121,12 +121,12 @@ io.on('connection', (socket) => { // Обработка подключения �
         const searchResult = await roomSearchDatabase(data.roomLogin);
         console.log('Получили результаты поиска комнаты')
         if (!searchResult) { // Если комнаты нет ,то создаём её и добавляем на сервер
-            await registerRoom(data);
+            const roomID = await registerRoom(data);
             console.log('Передаём ID пользователя:' + data.userID + ' И логин комнаты ' + data.roomLogin)
             // Добавляем комнату в объект пользователя
-            await addingRoomUser(data.userID, data.roomLogin);
+            await addingRoomUser(data.userID, roomID);
             // Затем добавлем пользователя в объект комнаты
-            await addingUserRoom(data.userID, data.roomLogin)
+            await addingUserRoom(data.userID, roomID)
             // Отправляем событие обновления клиенту
             io.emit('rooms_updated', {  });
         } else {
@@ -143,9 +143,9 @@ io.on('connection', (socket) => { // Обработка подключения �
         } else {
             // Добавляем эту комнату в объект пользователя
             console.log('Передаём ID пользователя: ' + data.userID + ' И логин комнаты ' + data.roomLogin)
-            await addingRoomUser(data.userID, data.roomLogin);
+            await addingRoomUser(data.userID, searchResult.roomID);
             // Затем добавлем пользователя в объект комнаты
-            await addingUserRoom(data.userID, data.roomLogin)
+            await addingUserRoom(data.userID, searchResult.roomID)
             // Отправляем событие обновления клиенту
             io.emit('rooms_updated', {  });
         }
@@ -153,8 +153,8 @@ io.on('connection', (socket) => { // Обработка подключения �
 
     // Обработка события выхода из комнаты
     socket.on('leave_chat', async (data) => {
-       await removingRoomUser(data.userID, data.roomLogin);
-       await removingUserRoom(data.userID, data.roomLogin);
+       await removingRoomUser(data.userID, data.roomID);
+       await removingUserRoom(data.userID, data.roomID);
         io.emit('rooms_updated', {  });
     })
     
@@ -163,6 +163,16 @@ io.on('connection', (socket) => { // Обработка подключения �
     socket.on('chat_search', (data) => {
         const searchResult = searchMessages(data.searchQuery , data.messagesReceived);
         socket.emit('chat_message_search_results', searchResult)
+    })
+
+    // Обработка изминения параметров групповог чата
+    socket.on('change_room', async (data) => {
+        const {roomID ,newAvatar, newName, newLogin, newAbout} = data;
+        
+        if (newAvatar) await changingRoomAvatar(roomID, newAvatar);
+        if (newName) await changingRoomName(roomID, newName);
+        if (newLogin) await changingRoomLogin(roomID, newLogin);
+        if (newAbout) await changingRoomAbout(roomID, newAbout);
     })
 });
 
