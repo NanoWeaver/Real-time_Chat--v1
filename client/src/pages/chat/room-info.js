@@ -1,15 +1,16 @@
 import './styles.css'; // Импортируем стили
 import { useState, useEffect, useRef } from 'react'; // Импорт хуков React
-import {gettingUserDataId} from './../registration/script.js'
+import {gettingUserDataId} from './../registration/script.js';
+import {giveUserAdministratorRights, deleteUserFromChat} from './script.js';
 import ChangeRoom from './change-room.js';
 
-const RoomInfo = ({ socket, room, setWindowRoomInfo, userID }) => { // Определение компонента Massages с одним промтом 
+const RoomInfo = ({ socket, room, setRoom, setWindowRoomInfo, userID }) => { // Определение компонента Massages с одним промтом 
     const [usersData, setUsersData] = useState([]); // Состояние для хранения данных пользователей
     const [numberUsers, setNumberUsers] = useState(0); // Хранение колличества пользователей в комнате
     const [isAdmin, setIsAdmin] = useState(false) // Хранение состояния является ли пользователь админом в этой комнате
     const [changeRoomWindow, setChangeRoomWindow] = useState(false) // Состояние для отслеживания открытия окна изминения чата ( для админов)
 
-    // конвертируем имена ID пользователей в их имена
+    // конвертируем ID пользователей в их имена
     useEffect(() => {
         const fetchUserData = async () => {
             const adminIds = new Set(room.roomAdmin);
@@ -17,7 +18,7 @@ const RoomInfo = ({ socket, room, setWindowRoomInfo, userID }) => { // Опре�
                 room.roomUsers.map(async (user) => {
                    const userData =  await gettingUserDataId(user);
                    const isUserAdmin = adminIds.has(user);
-                   return [...userData, isUserAdmin];
+                   return [...userData, isUserAdmin, user];
                 })
             );
             setUsersData(fetchedData); // Обновляем состояние массива данных пользователей
@@ -54,6 +55,20 @@ const RoomInfo = ({ socket, room, setWindowRoomInfo, userID }) => { // Опре�
 
     const openChangeRoomWindow = () => {
         setChangeRoomWindow(true)
+    }
+
+    // Скрипт предоставления прав администратора внутри чата
+    const giveAdminUser = async (userID) => {
+       await giveUserAdministratorRights(userID, room)
+    }
+
+    // Скрипт удаления пользователя из чата
+    const deleteUser =  async (userID) => {
+        const newRoomDoc = await deleteUserFromChat(userID, room);
+        console.log('Новые значения комнаты ', newRoomDoc);
+        console.log('Новые значения массива админов комнаты ', newRoomDoc.roomAdmin);
+        setIsAdmin(newRoomDoc.roomAdmin);
+        setRoom(newRoomDoc);
     }
 
   return ( // Возвращаем JSX
@@ -94,13 +109,13 @@ const RoomInfo = ({ socket, room, setWindowRoomInfo, userID }) => { // Опре�
             <h3 className='room-info__bottom-header'>Участники :</h3>
             <ul className='room-info__user-list'>
                 {
-                    usersData.map(([username, login, isUserAdmin]) => (
+                    usersData.map(([username, login, isUserAdmin, userID]) => (
                         <li className='room-info__user-item' key={login}>{username}
                         {
                             isAdmin && !isUserAdmin ? (
                                 <div className='room-info__button-wrapper'>
-                                    <button className='room-info__button --give-admin'>+</button>
-                                    <button className='room-info__button --kick'>-</button>
+                                    <button className='room-info__button --give-admin' onClick={() => {giveAdminUser(userID, room)}}>+</button>
+                                    <button className='room-info__button --kick' onClick={() => deleteUser(userID)}>-</button>
                                 </div>
                             ) : null
                         }

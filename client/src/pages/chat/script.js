@@ -1,6 +1,7 @@
 import { db } from '../../firebase.js';
 import { collection, getDocs, getDoc, addDoc, query, where, updateDoc, doc, orderBy } from "firebase/firestore";
 import {userSearchDatabaseLogin, userSearchDatabaseID} from '../registration/script.js'
+import { use } from 'react';
 
 // Функция поиска комнаты в базе данных по логину
 export async function roomSearchDatabase(roomLogin) {
@@ -124,6 +125,8 @@ export async function removingUserRoom(userID, roomID) {
     await updateDoc(roomRef, {
         roomUsers : roomUsersNew
     })
+    roomDoc.roomUsers = roomUsersNew;
+    return roomDoc
 }
 
 // Функция получения списка комнат пользователя
@@ -238,4 +241,24 @@ export async function changingRoomAbout(roomID, newAbout) {
     await updateDoc(roomRef, {
         roomAbout: newAbout,
     })
+}
+
+// Функция присвоения прав админа для участника чата 
+export async function giveUserAdministratorRights(userID, room) {
+    // Формируем новый массив админов
+    const newAdminList = [...room.roomAdmin, userID];
+    // Формируем новый список админов
+    const roomRef = doc(db, 'rooms', room.roomID);
+    await updateDoc(roomRef, {
+        roomAdmin: newAdminList,
+    })
+}
+
+// Функция исключения участника чата 
+export async function deleteUserFromChat(userID, room) {
+    // Удаляем комнату из объекта пользователя
+    await removingRoomUser(userID, room.roomID);
+    // Удаляем пользователя из объекта комнаты
+    const newRoomDoc = await removingUserRoom(userID, room.roomID);
+    return newRoomDoc;
 }

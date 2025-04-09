@@ -28,6 +28,7 @@ img {
     display: flex;
     flex-direction: column;
     row-gap: 40px;
+    overflow-y: auto;
 }
 
 .room-info__head {
