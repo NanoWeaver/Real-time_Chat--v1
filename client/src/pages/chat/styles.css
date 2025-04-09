@@ -13,8 +13,244 @@ img {
     padding: 3%;
 }
 
+.connectify__chat-area-box {
+    width: 75%;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    column-gap: 3%;
+}
+
+.room-info {
+    width: 40%;
+    height: 100%;
+    background-color: beige;
+    display: flex;
+    flex-direction: column;
+    row-gap: 40px;
+    overflow-y: auto;
+}
+
+.room-info__head {
+    display: flex;
+    flex-direction: column;
+    row-gap: 25px;
+    padding: 20px 10px;
+}
+
+.room-info__header-wrapper {
+    display: flex;
+    column-gap: 10px;
+    align-items: center;
+}
+
+.room-info__close {
+    cursor: pointer;
+    background-color: transparent;
+    border: 0;
+    border-radius: 5px;
+    padding: 5px;
+    transition: background-color 0.3s ease-in-out;
+    display: flex;
+}
+
+.room-info__close:hover {
+    background-color: var(--secondary-background-color);
+}
+
+.room-info__close:active .room-info__close-svg {
+    fill: var(--secondary-text-color);
+}
+
+.room-info__close-svg {
+    fill: var(--primary-text-color);
+}
+
+.room-info__header {
+    margin: 0;
+}
+
+.room-info__change {
+    cursor: pointer;
+    background-color: transparent;
+    border: 0;
+    border-radius: 5px;
+    padding: 5px;
+    transition: background-color 0.3s ease-in-out;
+    display: flex;
+}
+
+.room-info__change:hover {
+    background-color: var(--secondary-background-color);
+}
+
+.room-info__change:active .room-info__change-svg {
+    fill: var(--secondary-text-color);
+    stroke: var(--secondary-text-color);
+}
+
+.room-info__change-svg {
+    fill: var(--primary-text-color);
+    stroke: var(--primary-text-color);
+}
+
+.room-info__avatar {
+    width: 100%;
+    display: block;
+}
+
+.room-info__text-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 10px;
+}
+
+.room-info__chat-name {
+    margin: 0;
+}
+
+.room-info__about {
+    margin: 0;
+    padding: 0 20px;
+}
+
+.room-info__bottom {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    padding: 0 20px;
+}
+
+.room-info__bottom-header {
+    margin: 0;
+}
+
+.room-info__user-list {
+    margin: 0;
+    list-style: none;
+    padding: 0 10px;
+}
+
+.room-info__user-item {
+    display: flex;
+    column-gap: 20px;
+}
+
+.room-info__button-wrapper {
+    display: flex;
+    column-gap: 10px;
+}
+
+.room-info__button {
+    cursor: pointer;
+    background-color: transparent;
+    border: 0;
+    border-radius: 5px;
+    padding: 5px;
+    transition: background-color 0.3s ease-in-out;
+    display: flex;
+}
+
+.--give-admin {
+    background-color: green;
+}
+
+.--kick {
+    background-color: red;
+}
+
+.change-room {
+    width: 40%;
+    height: 100%;
+    padding: 20px 10px;
+    background-color: rgb(186, 255, 196);
+    display: flex;
+    flex-direction: column;
+    row-gap: 40px;
+}
+
+.change-room__head {
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+}
+
+.change-room__back {
+    background-color: transparent;
+    border: 0;
+    border-radius: 5px;
+    display: flex;
+    padding: 5px;
+}
+
+.change-room__back-svg {
+    fill: var(--primary-text-color);
+}
+
+.change-room__heading {
+    margin: 0;
+}
+
+.change-room__room-avatar-wrapper {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.change-room__room-avatar-wrapper:active .change-room__SVG--open-SVG {
+    stroke: var(--secondary-text-color);
+}
+
+.change-room__room-avatar {
+    width: 100%;
+}
+
+.change-room__SVG {
+    opacity: 0;
+    position: absolute;
+    left: 136.5px;
+    top: 250px;
+    stroke: var(--primary-background-color);
+    transition: stroke 0.1s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.change-room__SVG--open-SVG {
+    opacity: 1;
+}
+
+.change-room__room-avatar-cancel {
+    padding: 14px 14px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    border: none;
+    width: 100%;
+    background: var(--primary-button-color);
+    color: var(--primary-text-color);
+    margin-top: 5px;
+}
+
+.change-room__info-wraper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 5px;
+}
+
+.change-room__info-input {
+    min-width: 100px;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid var(--primary-border-color);
+    font-size: 0.9rem;
+    color: var(--primary-text-color);
+    resize: none
+}
+
 .connectify__chat-area {
-    width: 70%;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     row-gap: 3%;
@@ -25,7 +261,7 @@ img {
     display: flex;
     flex-direction: column;
     height: 100%;
-    width: 30%;
+    width: 25%;
     background-color: var(--primary-background-color);
     border-radius: 5px;
 }
@@ -291,6 +527,7 @@ img {
 }
 
 .messages-area__head {
+    cursor: pointer;
     flex-shrink: 0;
     display: flex;
     justify-content: space-between;
@@ -320,9 +557,20 @@ img {
 .messages-area__option {
     cursor: pointer;
     border: 0;
+    border-radius: 5px;
     background-color: transparent;
-    padding: 0;
+    padding: 5px 0;
     width: 42px;
+    z-index: 5;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.messages-area__option:hover {
+    background-color: var(--secondary-background-color);
+}
+
+.messages-area__option:active .messages-area__option-svg{
+    fill: var(--secondary-text-color);
 }
 
 .messages-area__option-svg {
@@ -634,4 +882,9 @@ img {
     background-color: transparent;
     border: none;
     font-size: 0.9em;
+<<<<<<< HEAD
 }
+=======
+}
+
+>>>>>>> develop

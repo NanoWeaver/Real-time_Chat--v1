@@ -1,8 +1,9 @@
 import { db } from '../../firebase.js';
-import { collection, getDocs, addDoc, query, where, updateDoc, doc, orderBy } from "firebase/firestore";
+import { collection, getDocs, getDoc, addDoc, query, where, updateDoc, doc, orderBy } from "firebase/firestore";
 import {userSearchDatabaseLogin, userSearchDatabaseID} from '../registration/script.js'
+import { use } from 'react';
 
-// Функция поиска комнаты в базе данных
+// Функция поиска комнаты в базе данных по логину
 export async function roomSearchDatabase(roomLogin) {
     // Получаем нашу колекцию комнат
     const roomsCollection = collection(db, "rooms");
@@ -22,9 +23,33 @@ export async function roomSearchDatabase(roomLogin) {
     }
 }
 
+<<<<<<< HEAD
 // Функция регеистрации комнаты и добавления её в базу данных
 export async function registerRoom(room) {
     try {
+=======
+// Функция поиска комнаты в базе данных по ID 
+export async function roomSearchDatabaseID(roomID) {
+    const roomRef = doc(db, 'rooms', roomID);
+    try {
+        const roomSnap = await getDoc(roomRef)
+        if(roomSnap.exists()) {
+            console.log('Комната найдена ' ,roomSnap.data());
+            return roomSnap.data()
+        } else {
+            console.log('Комната не найдена ')
+        }
+    
+    } catch(error) {
+        console.log('Ошибка ' ,error)
+    }
+}
+
+
+// Функция регеистрации комнаты и добавления её в базу данных
+export async function registerRoom(room) {
+    try {
+>>>>>>> develop
         console.log(room)
         const roomDoc = await addDoc(collection(db, "rooms"), {
             roomName: room.roomName,
@@ -39,20 +64,25 @@ export async function registerRoom(room) {
                 message: ''
             }
         });
+        const roomRef = doc(db, 'rooms', roomDoc.id); // Получаем ссылку на этот объект
+        await updateDoc(roomRef, { // Добавляем пользователю его уникальный ID
+            roomID : roomDoc.id,
+        })
         console.log("Комната создана с ID:",  roomDoc.id);
+        return roomDoc.id
     } catch (e) {
         console.error("Ошибка создания комнаты:", e);
     }
 }
 
 // Фунция добавления новой комнаты в объект пользователя
-export async function addingRoomUser(userID, roomLogin) {
+export async function addingRoomUser(userID, roomID) {
     // Получаем пользователя
     const userDoc = await userSearchDatabaseID(userID);
     console.log(userDoc)
     // Добавляем комнату в общий массив
     const userRoomsNew = userDoc.userRooms;
-    userRoomsNew.push(roomLogin)
+    userRoomsNew.push(roomID)
     // Получаем ссылку на документ пользователя
     const userRef = doc(db, 'users', userID);
     await updateDoc(userRef, {
@@ -61,27 +91,35 @@ export async function addingRoomUser(userID, roomLogin) {
 }
 
 // Фунция добавления нового пользователя в объект комнаты
-export async function addingUserRoom(userID, roomLogin) {
+export async function addingUserRoom(userID, roomID) {
     // Получаем комнату
-    const roomDoc = await roomSearchDatabase(roomLogin);
+    const roomDoc = await roomSearchDatabaseID(roomID);
     console.log(roomDoc)
     // Добавляем пользователя в общий массив
     const roomUsersNew = roomDoc.roomUsers;
     roomUsersNew.push(userID)
     // Получаем ссылку на документ комнаты
-    const roomRef = doc(db, 'rooms', roomDoc.id);
+    const roomRef = doc(db, 'rooms', roomID);
     await updateDoc(roomRef, {
         roomUsers : roomUsersNew
     })
 }
 
 // Фунция удаления комнаты из объекта пользователя
+<<<<<<< HEAD
 export async function removingRoomUser(userID, roomLogin) {
+=======
+export async function removingRoomUser(userID, roomID) {
+>>>>>>> develop
     // Получаем пользователя
     const userDoc = await userSearchDatabaseID(userID);
     console.log(userDoc)
     // Создаём новый массив без удалённой комнаты
+<<<<<<< HEAD
     const userRoomsNew = userDoc.userRooms.filter(room => room !== roomLogin);
+=======
+    const userRoomsNew = userDoc.userRooms.filter(room => room !== roomID);
+>>>>>>> develop
     // Получаем ссылку на документ пользователя
     const userRef = doc(db, 'users', userID);
     await updateDoc(userRef, {
@@ -90,17 +128,32 @@ export async function removingRoomUser(userID, roomLogin) {
 }
 
 // Фунция удаления пользователя из объекта комнаты
+<<<<<<< HEAD
 export async function removingUserRoom(userID, roomLogin) {
     // Получаем комнату
     const roomDoc = await roomSearchDatabase(roomLogin);
+=======
+export async function removingUserRoom(userID, roomID) {
+    // Получаем комнату
+    const roomDoc = await roomSearchDatabaseID(roomID);
+>>>>>>> develop
     console.log(roomDoc)
     // Создаём новый массив без пользователя
     const roomUsersNew = roomDoc.roomUsers.filter(user => user !== userID);
     // Получаем ссылку на документ комнаты
+<<<<<<< HEAD
     const roomRef = doc(db, 'rooms', roomDoc.id);
     await updateDoc(roomRef, {
         roomUsers : roomUsersNew
     })
+=======
+    const roomRef = doc(db, 'rooms', roomID);
+    await updateDoc(roomRef, {
+        roomUsers : roomUsersNew
+    })
+    roomDoc.roomUsers = roomUsersNew;
+    return roomDoc
+>>>>>>> develop
 }
 
 // Функция получения списка комнат пользователя
@@ -113,13 +166,14 @@ export async function getUserRooms(userID) {
 }
 
 // Функция добавления сообщения в базу данных
-export async function addMessage(roomLogin, message, userID, createdtime, userAvatar) {
+export async function addMessage(roomID, roomLogin, message, userID, createdtime, userAvatar) {
     try {
         const messageDoc = await addDoc(collection(db, "messages"), {
             userID,
             userName: '',
             userLogin: '',
             roomLogin, 
+            roomID,
             message, 
             createdtime,
             userAvatar, 
@@ -131,11 +185,11 @@ export async function addMessage(roomLogin, message, userID, createdtime, userAv
 }
 
 // Функция загрузики истории собщений для определённой комнаты
-export async function getMessagesRoom(roomLogin, limit = 20) {
+export async function getMessagesRoom(roomID, limit = 20) {
     // Получили колекцию сообщений
     const collectionMessages = collection(db, 'messages');
     // Формируем запрос к бд
-    const request = query(collectionMessages, where('roomLogin', '==', roomLogin),orderBy('createdtime', 'desc'));
+    const request = query(collectionMessages, where('roomID', '==', roomID),orderBy('createdtime', 'desc'));
     // Получаем результаты поиска
     const messageSnapshot = await getDocs(request)
 
@@ -143,10 +197,10 @@ export async function getMessagesRoom(roomLogin, limit = 20) {
 }
 
 // Функция изминения данных последнего сообщения в комнате
-export async function changingLastMessage(userID, roomLogin, message, createdtime) {
+export async function changingLastMessage(userID, roomID, message, createdtime, roomLogin) {
     // Получаем комнату
     console.log('Получаем комнату для обновления полседнего сообщения с именем ' + roomLogin + 'с текстом ' + message)
-    const roomDoc = await roomSearchDatabase(roomLogin);
+    const roomDoc = await roomSearchDatabaseID(roomID);
     // Создаём новый объект последнего сообщения
     const roomLastMessageNew = {
         userSenderID: userID,
@@ -174,4 +228,67 @@ export function searchMessages(searchQuery, messagesReceived) {
     const filteredSort = filtered.sort((a, b) => b.createdtime - a.createdtime);
     console.log('Отсортированный массив ' , filteredSort)
     return filteredSort;
+<<<<<<< HEAD
+=======
+}
+
+// Функция изминения аватарки групового чата
+export async function changingRoomAvatar(roomID, newAvatar) {
+    // Получаем ссылку на чат
+    const roomRef = await doc(db, 'rooms', roomID);
+    // Меняем аватарку
+    await updateDoc(roomRef, {
+        roomAvatar: newAvatar,
+    })
+}
+
+// Функция изминения имени групового чата
+export async function changingRoomName(roomID, newName) {
+    // Получаем ссылку на чат
+    const roomRef = await doc(db, 'rooms', roomID);
+    // Меняем аватарку
+    await updateDoc(roomRef, {
+        roomName: newName,
+    })
+}
+
+// Функция изминения логина групового чата
+export async function changingRoomLogin(roomID, newLogin) {
+    // Получаем ссылку на чат
+    const roomRef = await doc(db, 'rooms', roomID);
+    // Меняем аватарку
+    await updateDoc(roomRef, {
+        roomLogin: newLogin,
+    })
+}
+
+// Функция изминения описания групового чата
+export async function changingRoomAbout(roomID, newAbout) {
+    // Получаем ссылку на чат
+    const roomRef = await doc(db, 'rooms', roomID);
+    // Меняем аватарку
+    await updateDoc(roomRef, {
+        roomAbout: newAbout,
+    })
+}
+
+// Функция присвоения прав админа для участника чата 
+export async function giveUserAdministratorRights(userID, room) {
+    // Формируем новый массив админов
+    const newAdminList = [...room.roomAdmin, userID];
+    // Формируем новый список админов
+    const roomRef = doc(db, 'rooms', room.roomID);
+    await updateDoc(roomRef, {
+        roomAdmin: newAdminList,
+    })
+}
+
+// Функция исключения участника чата 
+export async function deleteUserFromChat(userID, room) {
+    // Удаляем комнату из объекта пользователя
+    await removingRoomUser(userID, room.roomID);
+    // Удаляем пользователя из объекта комнаты
+    const newRoomDoc = await removingUserRoom(userID, room.roomID);
+    return newRoomDoc;
+>>>>>>> develop
 }

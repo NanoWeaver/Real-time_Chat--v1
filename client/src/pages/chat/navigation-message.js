@@ -1,7 +1,7 @@
 import './styles.css'; // Импортируем стили
 import { useState, useEffect, useRef } from 'react'; // Импорт хуков React
 import { validationUserName, validationUserLogin} from '../../validation/index.js'; // Импортируем функции
-import {getUserRooms, roomSearchDatabase} from './script.js' // Импорт функции получения списка комнат пользователя
+import {getUserRooms, roomSearchDatabase, roomSearchDatabaseID} from './script.js' // Импорт функции получения списка комнат пользователя
 
 const NavigationMessage = ({ socket, userLogin, setRoom, room, userAvatar ,SetUserSettingOn, userName, userID, userAbout, setUsetAbout, setRoomCreatingOn}) => { // Определение компонента Massages с одним промтом 
   const [creatingChat, setCreatingChat] = useState(false);
@@ -63,7 +63,7 @@ const NavigationMessage = ({ socket, userLogin, setRoom, room, userAvatar ,SetUs
     console.log('userRoomsList = ' + userRoomsList)
     // Проходим по всем логинам комнт из объекта пользователя и получаем объекты этих комнат
     for (let i = 0; i < userRoomsList.length; i++) {
-      let room = await roomSearchDatabase(userRoomsList[i]);
+      let room = await roomSearchDatabaseID(userRoomsList[i]);
       console.log('Объект комнаты ' + room)
       userRoomsObjectArr.push(room);
     }
@@ -178,8 +178,8 @@ const NavigationMessage = ({ socket, userLogin, setRoom, room, userAvatar ,SetUs
               <input className='navigation-message__search-input'/>
               <button className='navigation-message__search-button' key="search">
                 <svg className='navigation-message__search-svg' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20px" height="20px">
-                  <circle stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" cx="8" cy="8" r="6"/>
-                  <line stroke-width="2" stroke-miterlimit="10" x1="11" y1="12" x2="18" y2="19"/>
+                  <circle strokeWidth="2" strokeLinecap="round" strokeMiterlimit="10" cx="8" cy="8" r="6"/>
+                  <line strokeWidth="2" strokeMiterlimit="10" x1="11" y1="12" x2="18" y2="19"/>
                 </svg>
               </button>
             </div>
@@ -211,7 +211,7 @@ const NavigationMessage = ({ socket, userLogin, setRoom, room, userAvatar ,SetUs
               rooms.length >= 1 ? (
                 <div className="list-massages">
                   {rooms.map((room) => (
-                    <div key={room.roomLogin} className={`message-wrapper ${activeRoom.roomLogin === room.roomLogin ? 'message-wrapper--active' : ''}`} onClick = {() => handleRoomClick(room)}>
+                    <div key={room.roomID} className={`message-wrapper ${activeRoom.roomLogin === room.roomLogin ? 'message-wrapper--active' : ''}`} onClick = {() => handleRoomClick(room)}>
                       <div className='message-wrapper__logo-wrapper'>
                         <img className='message-wrapper__logo' src={room.roomAvatar}  alt='Иконка Чата' width={54} height={54}/>
                       </div>
