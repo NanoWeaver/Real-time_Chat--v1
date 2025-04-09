@@ -23,11 +23,6 @@ export async function roomSearchDatabase(roomLogin) {
     }
 }
 
-<<<<<<< HEAD
-// Функция регеистрации комнаты и добавления её в базу данных
-export async function registerRoom(room) {
-    try {
-=======
 // Функция поиска комнаты в базе данных по ID 
 export async function roomSearchDatabaseID(roomID) {
     const roomRef = doc(db, 'rooms', roomID);
@@ -49,7 +44,6 @@ export async function roomSearchDatabaseID(roomID) {
 // Функция регеистрации комнаты и добавления её в базу данных
 export async function registerRoom(room) {
     try {
->>>>>>> develop
         console.log(room)
         const roomDoc = await addDoc(collection(db, "rooms"), {
             roomName: room.roomName,
@@ -106,20 +100,12 @@ export async function addingUserRoom(userID, roomID) {
 }
 
 // Фунция удаления комнаты из объекта пользователя
-<<<<<<< HEAD
-export async function removingRoomUser(userID, roomLogin) {
-=======
 export async function removingRoomUser(userID, roomID) {
->>>>>>> develop
     // Получаем пользователя
     const userDoc = await userSearchDatabaseID(userID);
     console.log(userDoc)
     // Создаём новый массив без удалённой комнаты
-<<<<<<< HEAD
-    const userRoomsNew = userDoc.userRooms.filter(room => room !== roomLogin);
-=======
     const userRoomsNew = userDoc.userRooms.filter(room => room !== roomID);
->>>>>>> develop
     // Получаем ссылку на документ пользователя
     const userRef = doc(db, 'users', userID);
     await updateDoc(userRef, {
@@ -128,32 +114,19 @@ export async function removingRoomUser(userID, roomID) {
 }
 
 // Фунция удаления пользователя из объекта комнаты
-<<<<<<< HEAD
-export async function removingUserRoom(userID, roomLogin) {
-    // Получаем комнату
-    const roomDoc = await roomSearchDatabase(roomLogin);
-=======
 export async function removingUserRoom(userID, roomID) {
     // Получаем комнату
     const roomDoc = await roomSearchDatabaseID(roomID);
->>>>>>> develop
     console.log(roomDoc)
     // Создаём новый массив без пользователя
     const roomUsersNew = roomDoc.roomUsers.filter(user => user !== userID);
     // Получаем ссылку на документ комнаты
-<<<<<<< HEAD
-    const roomRef = doc(db, 'rooms', roomDoc.id);
-    await updateDoc(roomRef, {
-        roomUsers : roomUsersNew
-    })
-=======
     const roomRef = doc(db, 'rooms', roomID);
     await updateDoc(roomRef, {
         roomUsers : roomUsersNew
     })
     roomDoc.roomUsers = roomUsersNew;
     return roomDoc
->>>>>>> develop
 }
 
 // Функция получения списка комнат пользователя
@@ -228,8 +201,6 @@ export function searchMessages(searchQuery, messagesReceived) {
     const filteredSort = filtered.sort((a, b) => b.createdtime - a.createdtime);
     console.log('Отсортированный массив ' , filteredSort)
     return filteredSort;
-<<<<<<< HEAD
-=======
 }
 
 // Функция изминения аватарки групового чата
@@ -290,5 +261,4 @@ export async function deleteUserFromChat(userID, room) {
     // Удаляем пользователя из объекта комнаты
     const newRoomDoc = await removingUserRoom(userID, room.roomID);
     return newRoomDoc;
->>>>>>> develop
 }

@@ -3,11 +3,7 @@ import { useState, useEffect, useRef } from 'react'; // Импорт хуков 
 import {getMessagesRoom} from '../chat/script.js'
 import RoomOptions from './room-option.js';
 
-<<<<<<< HEAD
-const MessagesArea = ({ socket, userName, userLogin, room, userID }) => { // Определение компонента Massages с одним промтом 
-=======
 const MessagesArea = ({ socket, userName, userLogin, room, userID, setWindowRoomInfo }) => { // Определение компонента Massages с одним промтом 
->>>>>>> develop
   const [messagesReceived, setMessagesReceived] = useState([]); // Определяем состояние для хранения сообщений
   const messagesEndRef = useRef(); // Будем получать ссылку на DOM последнего сообщения
   const [numberUsers,setNumberUsers] = useState(0); // Хранение колличества пользователей в комнате
@@ -103,11 +99,7 @@ const MessagesArea = ({ socket, userName, userLogin, room, userID, setWindowRoom
 
   // Скрипт выхода из чата
   const handleLeaveChat = () => {
-<<<<<<< HEAD
-    socket.emit('leave_chat', {userID, roomLogin : room.roomLogin});
-=======
     socket.emit('leave_chat', {userID, roomID : room.roomID});
->>>>>>> develop
     setMenuVisible(false)
   }
 
@@ -168,11 +160,6 @@ const MessagesArea = ({ socket, userName, userLogin, room, userID, setWindowRoom
     };
   };
 
-<<<<<<< HEAD
-  return ( // Возвращаем JSX
-    <div className='messages-area'>
-      <div className='messages-area__head'>
-=======
   // Скрипт открытия информации о чате
   const openRoomInfo = () => {
     setWindowRoomInfo(true);
@@ -182,7 +169,6 @@ const MessagesArea = ({ socket, userName, userLogin, room, userID, setWindowRoom
   return ( // Возвращаем JSX
     <div className='messages-area'>
       <div className='messages-area__head' onClick={openRoomInfo}>
->>>>>>> develop
         <img className='messages-area__logo' src={room.roomAvatar} alt='Иконка пользователя' width={42} height={42}/>
         {
           messageSearchField ? (
@@ -218,14 +204,10 @@ const MessagesArea = ({ socket, userName, userLogin, room, userID, setWindowRoom
             </div>
           )
         }
-<<<<<<< HEAD
-        <button className='messages-area__option' onClick={switchingMenuVisibility} ref={messagesAreaOption}>
-=======
         <button className='messages-area__option' onClick={(e) => { 
           e.stopPropagation();
           switchingMenuVisibility();
           }} ref={messagesAreaOption}>
->>>>>>> develop
           <svg className='messages-area__option-svg' width="5" height="20" viewBox="0 0 5 20" xmlns="http://www.w3.org/2000/svg">
             <circle cx="2.5" cy="17.5" r="2" />
             <circle cx="2.5" cy="10" r="2"/>
