@@ -182,7 +182,7 @@ export async function changingLastMessage(userID, roomID, message, createdtime, 
         message,
     };
     // Получаем ссылку на документ комнаты
-    const roomRef = doc(db, 'rooms', roomDoc.id);
+    const roomRef = doc(db, 'rooms', roomID);
     // Перезаписываем данные
     await updateDoc(roomRef, {
         lastMessage : roomLastMessageNew
