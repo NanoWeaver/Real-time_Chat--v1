@@ -1,7 +1,6 @@
 import { db } from '../../firebase.js';
 import { collection, getDocs, getDoc, addDoc, query, where, updateDoc, doc, orderBy } from "firebase/firestore";
 import {userSearchDatabaseLogin, userSearchDatabaseID} from '../registration/script.js'
-import { use } from 'react';
 
 // Функция поиска комнаты в базе данных по логину
 export async function roomSearchDatabase(roomLogin) {
@@ -182,7 +181,7 @@ export async function changingLastMessage(userID, roomID, message, createdtime, 
         message,
     };
     // Получаем ссылку на документ комнаты
-    const roomRef = doc(db, 'rooms', roomDoc.id);
+    const roomRef = doc(db, 'rooms', roomID);
     // Перезаписываем данные
     await updateDoc(roomRef, {
         lastMessage : roomLastMessageNew
