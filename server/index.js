@@ -72,7 +72,8 @@ io.on('connection', (socket) => { // Обработка подключения �
             userName,
             userAvatar,
             createdtime,
-            userLogin
+            userLogin,
+            userID,
         });
         // Добавляем сообщение в бд
         await addMessage(room.roomID, room.roomLogin, message, userID, createdtime, userAvatar  )
@@ -173,6 +174,12 @@ io.on('connection', (socket) => { // Обработка подключения �
         if (newName) await changingRoomName(roomID, newName);
         if (newLogin) await changingRoomLogin(roomID, newLogin);
         if (newAbout) await changingRoomAbout(roomID, newAbout);
+    })
+
+    // Обработка запроса на получение информации о пользователе
+    socket.on('get_user_data', async (data) => {
+        const userDoc = await userSearchDatabaseID(data.IDSelectedUser)
+        socket.emit('result_user_data', (userDoc))
     })
 });
 

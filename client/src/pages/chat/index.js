@@ -6,12 +6,15 @@ import NavigationMessage from './navigation-message.js'
 import UserSetting from './user-setting.js'
 import CreatingRoom from './creating-room.js'
 import RoomInfo from './room-info.js';
+import UserInfo from './user-info.js';
 
 // Определяем компонент Chat
 const Chat = ({ userName, room, socket, userLogin, setRoom, userAvatar, setUserAvatar, setUserName , setUserLogin, userPassword, setUserPassword, userID, userAbout, setUserAbout}) => { // Он принимает три пропса
   const [userSettingOn, SetUserSettingOn] = useState(false);
   const [roomCreatingOn, setRoomCreatingOn] = useState(false);
   const [windowRoomInfo, setWindowRoomInfo] = useState(false) // Состояние для отслеживания открыто ли окно инофрмации о чате
+  const [windowUserInfo, setWindowUserInfo] = useState(false) // Состояние для отслеживания откро ли окно информации о пользователе
+  const [IDSelectedUser, setIDSelectedUser] = useState('') // Состояние для хранения ID пользователя,которого мы выбрали в чате
   return ( // Возвращаемый JSX:
     <div className='connectify'>
         <NavigationMessage socket={socket} userLogin={userLogin} setRoom={setRoom} room={room} userAvatar={userAvatar} SetUserSettingOn={SetUserSettingOn} userID={userID} userName={userName} userAbout = {userAbout} setUserAbout = {setUserAbout} setRoomCreatingOn = {setRoomCreatingOn}/>
@@ -25,8 +28,13 @@ const Chat = ({ userName, room, socket, userLogin, setRoom, userAvatar, setUserA
                     <RoomInfo socket={socket} room={room} setRoom={setRoom} setWindowRoomInfo = {setWindowRoomInfo} userID = {userID} />
                   ) : null
                 }
+                {
+                  windowUserInfo ? (
+                    <UserInfo socket={socket} setWindowUserInfo={setWindowUserInfo} IDSelectedUser={IDSelectedUser} />
+                  ) : null
+                }
                 <div className='connectify__chat-area'>
-                <MessagesArea socket={socket} userName={userName} room={room} userLogin={userLogin} userAvatar={userAvatar} userID={userID} setWindowRoomInfo = {setWindowRoomInfo}/>
+                <MessagesArea socket={socket} userName={userName} room={room} userLogin={userLogin} userAvatar={userAvatar} userID={userID} setWindowRoomInfo = {setWindowRoomInfo} setWindowUserInfo={setWindowUserInfo} setIDSelectedUser={setIDSelectedUser} />
                 <SendMessage socket={socket} userName={userName} room={room} userLogin={userLogin} userAvatar={userAvatar} userID={userID} />
               </div>
               </div>

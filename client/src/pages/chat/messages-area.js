@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'; // Импорт хуков 
 import {getMessagesRoom} from '../chat/script.js'
 import RoomOptions from './room-option.js';
 
-const MessagesArea = ({ socket, userName, userLogin, room, userID, setWindowRoomInfo }) => { // Определение компонента Massages с одним промтом 
+const MessagesArea = ({ socket, userName, userLogin, room, userID, setWindowRoomInfo, setWindowUserInfo, setIDSelectedUser }) => { // Определение компонента Massages с одним промтом 
   const [messagesReceived, setMessagesReceived] = useState([]); // Определяем состояние для хранения сообщений
   const messagesEndRef = useRef(); // Будем получать ссылку на DOM последнего сообщения
   const [numberUsers,setNumberUsers] = useState(0); // Хранение колличества пользователей в комнате
@@ -77,6 +77,7 @@ const MessagesArea = ({ socket, userName, userLogin, room, userID, setWindowRoom
           userName: data.userName,
           userAvatar: data.userAvatar,
           createdtime: data.createdtime,
+          userID : data.userID,
           isCurrentUser
         },
       ]);
@@ -166,6 +167,12 @@ const MessagesArea = ({ socket, userName, userLogin, room, userID, setWindowRoom
     console.log('Объект комнаты ' ,room)
   }
 
+  // Скрипт открытия информации о пользователе 
+  const openUserInfo = (userID) => {
+    setWindowUserInfo(true);
+    setIDSelectedUser(userID);
+  }
+
   return ( // Возвращаем JSX
     <div className='messages-area'>
       <div className='messages-area__head' onClick={openRoomInfo}>
@@ -218,7 +225,7 @@ const MessagesArea = ({ socket, userName, userLogin, room, userID, setWindowRoom
       <div className='messages-area__content'>
         <RoomOptions visible = {menuVisible} onLeaveChat = {handleLeaveChat} onToggleSound = {handleToggleSound} onSearchMessages = {handleSearchMessages} />
         {messagesReceived.map((msg, i) => (
-        <div  key={msg.createdtime} ref={(el) => assignRefs(el, msg.createdtime)} className={`message__box message__box--${msg.isCurrentUser ? 'you' : 'they'}`}>
+        <div  key={msg.createdtime} ref={(el) => assignRefs(el, msg.createdtime)} className={`message__box message__box--${msg.isCurrentUser ? 'you' : 'they'}`} onClick={() => openUserInfo(msg.userID)}>
           <div key={i} className={`message__wrapper message__wrapper--${msg.isCurrentUser ? 'you' : 'they'}`}>
           <div className='message__head'>
             <img className='message__user-avatar' src={msg.userAvatar} width={45} height={45}/>

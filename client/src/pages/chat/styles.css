@@ -249,6 +249,84 @@ img {
     resize: none
 }
 
+.user-info {
+    width: 40%;
+    height: 100%;
+    background-color: beige;
+    display: flex;
+    flex-direction: column;
+    row-gap: 40px;
+    overflow-y: auto;
+}
+
+.user-info__header-wrapper {
+    padding: 5px;
+    display: flex;
+    column-gap: 10px;
+    align-items: center;
+}
+
+.user-info__close {
+    cursor: pointer;
+    background-color: transparent;
+    border: 0;
+    border-radius: 5px;
+    padding: 5px;
+    transition: background-color 0.3s ease-in-out;
+    display: flex;
+}
+
+.user-info__close:hover {
+    background-color: var(--secondary-background-color);
+}
+
+.user-info__close:active .user-info__close-svg {
+    fill: var(--secondary-text-color);
+}
+
+.user-info__close-svg {
+    fill: var(--primary-text-color);
+}
+
+.user-info__header {
+    margin:0;
+    color: var(--primary-text-color);
+}
+
+.user-info__avatar {
+    width: 100%;
+    display: block;
+}
+
+.user-info__data {
+    padding: 0 20px;
+}
+
+.user-info__text {
+    color: var(--primary-text-color);
+    font-size: 1.2em;
+}
+
+.user-info__span {
+    color: var(--secondary-text-color);
+    font-size: 0.8em;
+}
+
+.user-info__bottom {
+    display: flex;
+    justify-content: center;
+}
+
+.user-info__button {
+    cursor: pointer;
+    padding: 15px;
+    border: 0;
+    border-radius: 5px;
+    background: var(--secondary-button-color);
+    color: var(--primary-text-color);
+    font-size: 1em;
+}
+
 .connectify__chat-area {
     flex-grow: 1;
     display: flex;
