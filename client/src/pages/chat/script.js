@@ -261,3 +261,10 @@ export async function deleteUserFromChat(userID, room) {
     const newRoomDoc = await removingUserRoom(userID, room.roomID);
     return newRoomDoc;
 }
+
+// Функция поиска личного чата у пользователя
+export async function searchPrivateChat(targetUser, currentUser) {
+    const userDoc = await userSearchDatabaseID(currentUser);
+    const userPrivateChat = userDoc.userPrivateRooms || [];
+    return userPrivateChat.includes(targetUser + currentUser);
+}

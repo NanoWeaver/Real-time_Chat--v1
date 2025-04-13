@@ -4,7 +4,7 @@ import http from 'http'; // Импортируем встроенный моду
 import cors from 'cors'; // Импортируем библиотека для принятия запросов из других доменов
 import { Server } from 'socket.io'; // Импортируем класс с помощью деструктуризации объекта  
 import { userSearchDatabaseLogin, userSearchDatabaseID, verifyinUserPassword, registerUser, gettingUserDataId } from '../client/src/pages/registration/script.js'; // Импортируем наши функции работы с бд 
-import { roomSearchDatabase, registerRoom, addingRoomUser, addingUserRoom, addMessage, changingLastMessage, getMessagesRoom, searchMessages, removingRoomUser, removingUserRoom, changingRoomAvatar, changingRoomName, changingRoomLogin, changingRoomAbout } from '../client/src/pages/chat/script.js'; // Импортируем наши функции работы с бд 
+import { roomSearchDatabase, registerRoom, addingRoomUser, addingUserRoom, addMessage, changingLastMessage, getMessagesRoom, searchMessages, removingRoomUser, removingUserRoom, changingRoomAvatar, changingRoomName, changingRoomLogin, changingRoomAbout, searchPrivateChat } from '../client/src/pages/chat/script.js'; // Импортируем наши функции работы с бд 
 app.use(cors()); // Добавляем промежуточное CORS ПО , для обработки запросов с других доменов
 
 const server = http.createServer(app); // Создаём HTTP сервер с помощью экземпляра Express
@@ -180,6 +180,16 @@ io.on('connection', (socket) => { // Обработка подключения �
     socket.on('get_user_data', async (data) => {
         const userDoc = await userSearchDatabaseID(data.IDSelectedUser)
         socket.emit('result_user_data', (userDoc))
+    })
+
+    // Обработка подключения к личному чату с пользователем
+    socket.on('join_private_chat', async (data) => {
+       const {targetUser, currentUser} = data;
+        // Проверяем есть ли уже между пользователями чат
+        if (searchPrivateChat(targetUser, currentUser)) {
+            const privateChatID = targetUser + currentUser;
+            socket.emit('open_private_chat', (privateChatID));
+        }
     })
 });
 

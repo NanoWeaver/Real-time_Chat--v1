@@ -63,6 +63,7 @@ export async function registerUser(userName, userLogin, userPassword,userAvatar 
             userAvatar: userAvatar,
             userAbout: '',
             userRooms : [],
+            userPrivateRooms: [],
         });
         const userRef = doc(db, 'users', userDoc.id); // Получаем ссылку на этот объект
         await updateDoc(userRef, { // Добавляем пользователю его уникальный ID

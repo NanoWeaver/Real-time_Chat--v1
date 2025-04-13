@@ -35,8 +35,8 @@ const UserInfo = ({ socket, room, setRoom, setWindowUserInfo, userID, IDSelected
         setWindowUserInfo(false)
     }
 
-    const openDoc = () => {
-        console.log(userDoc)
+    const openChatBetweenUsers = (targetUser, currentUser = userID) => {
+        socket.emit('join_private_chat', {targetUser, currentUser})
     }
 
   return ( // Возвращаем JSX
@@ -57,7 +57,7 @@ const UserInfo = ({ socket, room, setRoom, setWindowUserInfo, userID, IDSelected
             </div>
         </div>
         <div className='user-info__bottom'>
-            <button className='user-info__button' onClick={openDoc}>Открыть чат</button>
+            <button className='user-info__button' onClick={() => openChatBetweenUsers(userDoc.userID)}>Открыть чат</button>
         </div>
     </div>
   );
